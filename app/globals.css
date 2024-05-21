@@ -16,18 +16,22 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@font-face {
+  font-family: "Vazir_matn";
+  src: url("../public/Vazir_matn.ttf") format("truetype");
+}
+
+* {
+  font-family: "Vazir_matn", sans-serif;
 }
