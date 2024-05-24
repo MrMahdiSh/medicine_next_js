@@ -1,10 +1,10 @@
 export default function MainButton({ onclick, text, isLoading }) {
   return (
     <button
-      onClick={onclick}
+      onClick={isLoading == false ? onclick : () => {}}
       className="bg-[#EE8D20] mx-auto w-[300px] h-[50px] mt-10 rounded-lg text-white"
     >
-      {isLoading == false ? text : "loading"}
+      {isLoading == false ? text : "درحال بارگیری"}
     </button>
   );
 }

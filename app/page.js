@@ -3,8 +3,11 @@
 import { useState } from "react";
 import MainInput from "@/components/input";
 import MainButton from "@/components/MainButton";
+import { toast } from "react-toastify";
+import { fetchData } from "@/utils/api";
+import { useRouter } from "next/navigation";
 
-export default function app() {
+export default function App() {
   return (
     <div
       className="flex items-center justify-center w-screen h-screen bg-cover bg-center"
@@ -20,9 +23,9 @@ export default function app() {
 }
 
 function Content() {
-  const [verifCodePhase, setVerifCodePhase] = useState(false);
-
   const [title, setTitle] = useState("حساب کاربری");
+
+  const [phone, setPhone] = useState("");
 
   const [code, setCode] = useState(["", "", "", ""]);
 
@@ -36,14 +39,69 @@ function Content() {
     }
   }
 
-  function handleInputPhone(value) {
-    if (value.length === 12 && value.startsWith("09")) {
-      isLoading(true);
-      
+  async function handleInputPhone() {
+    if (phone.length === 11 && phone.startsWith("09")) {
+      setIsLoading(true);
+      // send verif code
+      try {
+        const sendVerifCode = await fetchData(
+          "Auth/sendVerificationCode",
+          "POST",
+          {
+            phone,
+          }
+        );
+        console.log(sendVerifCode);
+        setTitle("کد تایید");
+        toast.success("کد با موفقیت ارسال شد");
+        setIsLoading(false);
+      } catch (e) {
+        setIsLoading(false);
+        toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
+      }
     } else {
       // sent a toastify error
+      toast.error("شماره تماس معتبر نیست");
     }
   }
+
+  function getPhone(e) {
+    setPhone(e.target.value);
+  }
+
+  const router = useRouter();
+
+  function HandleLoginSuccess() {
+    router.push("/dashboard");
+  }
+
+  async function handleValidCode(code) {
+    if (code.length === 4) {
+      setIsLoading(true);
+      try {
+        const data = await fetchData("Auth/verifyAccount", "POST", {
+          phone,
+          verification_code: code,
+        });
+        setIsLoading(false);
+        if (data["meli_code"]) {
+          HandleLoginSuccess();
+        } else {
+          setTitle("اطلاعات");
+        }
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user_details", JSON.stringify(data.user_details));
+        localStorage.setItem("user_role", data.role[0]);
+      } catch (e) {
+        setIsLoading(false);
+        toast.error("کد وارد شده صحیح نیست");
+      }
+    } else {
+      toast.error("کد وارد شده صحیح نیست");
+    }
+  }
+
+  async function submitDetails() {}
 
   return (
     <div>
@@ -57,18 +115,22 @@ function Content() {
 
       {title === "حساب کاربری" ? (
         <div className="w-full flex flex-col gap-10">
-          <MainInput placeholder={"شماره تلفن"} type={"number"} />
+          <MainInput
+            isLoading={isLoading}
+            theOnChange={getPhone}
+            placeholder={"شماره تلفن"}
+            type={"number"}
+          />
 
           <MainButton
             isLoading={isLoading}
             onclick={() => {
-              setVerifCodePhase(true);
-              setTitle("کد تایید");
+              handleInputPhone();
             }}
             text={"ادامه"}
           />
         </div>
-      ) : (
+      ) : title === "کد تایید" ? (
         <div className="flex flex-col">
           <div className="w-full h-full flex justify-center items-center">
             <div className="flex space-x-2">
@@ -80,6 +142,7 @@ function Content() {
                   value={char}
                   onChange={(e) => handleCodeInputChange(e.target.value, index)}
                   className="w-16 h-16 border border-gray-300 rounded-md text-center text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isLoading}
                 />
               ))}
             </div>
@@ -87,11 +150,40 @@ function Content() {
           <MainButton
             isLoading={isLoading}
             onclick={() => {
-              alert(code[0] + code[1] + code[2] + code[3]);
+              handleValidCode(code[0] + code[1] + code[2] + code[3]);
             }}
             text={"تایید"}
           />
         </div>
+      ) : title === "اطلاعات" ? (
+        <div className="flex flex-col gap-10">
+          <MainInput
+            isLoading={isLoading}
+            theOnChange={getPhone}
+            placeholder={"نام"}
+            type={"string"}
+          />
+          <MainInput
+            isLoading={isLoading}
+            theOnChange={getPhone}
+            placeholder={"نام خانوادگی"}
+            type={"string"}
+          />
+          <MainInput
+            isLoading={isLoading}
+            theOnChange={getPhone}
+            placeholder={"کدملی"}
+            type={"number"}
+          />
+
+          <MainButton
+            text={"ثبت"}
+            isLoading={isLoading}
+            onclick={submitDetails}
+          />
+        </div>
+      ) : (
+        <></>
       )}
     </div>
   );
