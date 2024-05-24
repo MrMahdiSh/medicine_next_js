@@ -22,28 +22,64 @@ export default function app() {
 function Content() {
   const [verifCodePhase, setVerifCodePhase] = useState(false);
 
-  const [title, setTitle] = useState("ورود");
+  const [title, setTitle] = useState("حساب کاربری");
+
+  const [code, setCode] = useState(["", "", "", ""]);
+
+  function handleCodeInputChange(value, index) {
+    if (/^\d$/.test(value) || value === "") {
+      const newCode = [...code];
+      newCode[index] = value;
+      setCode(newCode);
+    }
+  }
 
   return (
-    <div className="w-full mt-16 flex flex-col gap-10">
+    <div>
       {/* title */}
       <h1
         style={{ fontWeight: "bold", fontSize: "20px" }}
-        className="text-center"
+        className="text-center mb-16"
       >
         {title}
       </h1>
 
-      <MainInput placeholder={'شماره تلفن'} type={'number'} />
+      {title === "حساب کاربری" ? (
+        <div className="w-full flex flex-col gap-10">
+          <MainInput placeholder={"شماره تلفن"} type={"number"} />
 
-      <MainButton
-        onclick={() => {
-          setVerifCodePhase(true);
-          setTitle("کد تایید");
-        }}
-
-        text={'ادامه'}
-      />
+          <MainButton
+            onclick={() => {
+              setVerifCodePhase(true);
+              setTitle("کد تایید");
+            }}
+            text={"ادامه"}
+          />
+        </div>
+      ) : (
+        <div className="flex flex-col">
+          <div className="w-full h-full flex justify-center items-center">
+            <div className="flex space-x-2">
+              {code.map((char, index) => (
+                <input
+                  key={index}
+                  type="number"
+                  maxLength="1"
+                  value={char}
+                  onChange={(e) => handleCodeInputChange(e.target.value, index)}
+                  className="w-16 h-16 border border-gray-300 rounded-md text-center text-2xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              ))}
+            </div>
+          </div>
+          <MainButton
+            onclick={() => {
+              alert(code[0] + code[1] + code[2] + code[3]);
+            }}
+            text={"تایید"}
+          />
+        </div>
+      )}
     </div>
   );
 }
