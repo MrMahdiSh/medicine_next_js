@@ -38,7 +38,10 @@ function Content() {
 
   function handleInputPhone(value) {
     if (value.length === 12 && value.startsWith("09")) {
+      isLoading(true);
       
+    } else {
+      // sent a toastify error
     }
   }
 
