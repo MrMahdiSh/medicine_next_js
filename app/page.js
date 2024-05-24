@@ -26,11 +26,19 @@ function Content() {
 
   const [code, setCode] = useState(["", "", "", ""]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   function handleCodeInputChange(value, index) {
     if (/^\d$/.test(value) || value === "") {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
+    }
+  }
+
+  function handleInputPhone(value) {
+    if (value.length === 12 && value.startsWith("09")) {
+      
     }
   }
 
@@ -49,6 +57,7 @@ function Content() {
           <MainInput placeholder={"شماره تلفن"} type={"number"} />
 
           <MainButton
+            isLoading={isLoading}
             onclick={() => {
               setVerifCodePhase(true);
               setTitle("کد تایید");
@@ -73,6 +82,7 @@ function Content() {
             </div>
           </div>
           <MainButton
+            isLoading={isLoading}
             onclick={() => {
               alert(code[0] + code[1] + code[2] + code[3]);
             }}
