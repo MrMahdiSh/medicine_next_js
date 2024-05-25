@@ -83,8 +83,9 @@ function Content() {
           phone,
           verification_code: code,
         });
+        console.log(data);
         setIsLoading(false);
-        if (data["meli_code"]) {
+        if (data["user_details"]["meli_code"]) {
           HandleLoginSuccess();
         } else {
           setTitle("اطلاعات");
@@ -101,10 +102,6 @@ function Content() {
     }
   }
 
-  function successUpdateInfo() {
-    router.push("/dashboard");
-  }
-
   async function submitDetails() {
     try {
       await fetchData(
@@ -113,7 +110,7 @@ function Content() {
         { name, last_name: lastName, meli_code: meliCode },
         localStorage.getItem("token")
       );
-      successUpdateInfo();
+      HandleLoginSuccess();
     } catch (e) {
       toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
     }
