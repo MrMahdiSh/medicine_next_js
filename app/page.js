@@ -51,6 +51,7 @@ function Content() {
             phone,
           }
         );
+        toast.success(sendVerifCode["message"]);
         console.log(sendVerifCode);
         setTitle("کد تایید");
         toast.success("کد با موفقیت ارسال شد");
