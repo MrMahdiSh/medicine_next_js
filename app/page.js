@@ -101,7 +101,30 @@ function Content() {
     }
   }
 
-  async function submitDetails() {}
+  function successUpdateInfo() {
+    router.push("/dashboard");
+  }
+
+  async function submitDetails() {
+    try {
+      await fetchData(
+        "user/update",
+        "PUT",
+        { name, last_name: lastName, meli_code: meliCode },
+        localStorage.getItem("token")
+      );
+      successUpdateInfo();
+    } catch (e) {
+      toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
+    }
+  }
+
+  //new users details
+  const [name, setName] = useState("");
+
+  const [lastName, setLastName] = useState("");
+
+  const [meliCode, setMeliCode] = useState("");
 
   return (
     <div>
@@ -159,19 +182,25 @@ function Content() {
         <div className="flex flex-col gap-10">
           <MainInput
             isLoading={isLoading}
-            theOnChange={getPhone}
+            theOnChange={(e) => {
+              setName(e.target.value);
+            }}
             placeholder={"نام"}
             type={"string"}
           />
           <MainInput
             isLoading={isLoading}
-            theOnChange={getPhone}
+            theOnChange={(e) => {
+              setLastName(e.target.value);
+            }}
             placeholder={"نام خانوادگی"}
             type={"string"}
           />
           <MainInput
             isLoading={isLoading}
-            theOnChange={getPhone}
+            theOnChange={(e) => {
+              setMeliCode(e.target.value);
+            }}
             placeholder={"کدملی"}
             type={"number"}
           />
