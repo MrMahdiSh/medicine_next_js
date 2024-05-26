@@ -2,13 +2,24 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { FaUserFriends, FaClipboardList } from "react-icons/fa";
+import { FaUserFriends, FaClipboardList, FaUser } from "react-icons/fa";
 
-export default function dashboard() {
+export default function Dashboard() {
+  const [title, setTitle] = useState("صفحه اصلی");
+
+  function handleOptionClick(name) {
+    setTitle(name);
+  }
+
   return (
     <div className="h-dvh">
-      <Header title={"صفحه اصلی"} />
-      <Content />
+      <Header title={title} />
+      <div className="h-[440px] w-full relative">
+        <div className="w-full h-full absolute flex flex-row justify-around items-center">
+          <Content optionClick={handleOptionClick} pageName={title} />
+        </div>
+        <div className="w-full h-1/2 bg-[#A1BEE54F]"></div>
+      </div>
     </div>
   );
 }
@@ -26,7 +37,7 @@ function Header({ title }) {
   );
 }
 
-function Content() {
+function Content({ optionClick, pageName }) {
   const [hoveredOption, setHoveredOption] = useState(null);
 
   const options = [
@@ -34,45 +45,82 @@ function Content() {
     { name: "اطلاعات شخصی", icon: FaUserFriends },
   ];
 
-  return (
-    <div className="h-[440px] w-full relative">
-      <div className="w-full h-full absolute flex flex-row justify-around items-center">
-        {options.map((option, index) => {
-          const isHovered = hoveredOption === option.name;
-          const innerShadowStyle = isHovered
-            ? { boxShadow: "inset 0 0 30px rgba(0, 0, 0, 0.2)" }
-            : {};
-
-          return (
-            <div
-              className="option-container"
-              key={index}
-              onMouseEnter={() => setHoveredOption(option.name)}
-              onMouseLeave={() => setHoveredOption(null)}
-            >
-              <div
-                className={`w-[354.33px] h-[354.33px] bg-white rounded-3xl cursor-pointer overflow-hidden shadow-2xl ${
-                  isHovered ? "shadow-none" : ""
-                }`}
-                style={innerShadowStyle}
-              >
-                <div className="h-[70%] flex justify-center items-center">
-                  <option.icon
-                    size={100}
-                    style={{ color: isHovered ? "#EE8D20" : "" }}
-                  />
+  if (pageName == "اطلاعات شخصی") {
+    return (
+      <div className="w-full h-[10px] mb-40 relative">
+        <div className="w-3/4 mx-auto flex flex-row gap-10 justify-around">
+          <div className="w-[70%]">
+            <div className="bg-white shadow-xl rounded-2xl"></div>
+          </div>
+          <div className="w-[30%] relative">
+            <div className="bg-white h-[80vh] shadow-xl rounded-2xl">
+              {/* user profile */}
+              <div className="h-[200px] w-full flex justify-center items-center">
+                <div className="rounded-full bg-gray-500 w-40 h-40 flex items-center justify-center">
+                  <FaUser color="white" size={"40%"} />
                 </div>
-                <div className="h-[30%] flex justify-center items-center">
-                  <h1 style={{ color: isHovered ? "#EE8D20" : "" }}>
-                    {option.name}
-                  </h1>
+              </div>
+              {/* name */}
+              <div className="mt-10">
+                <h1 className="text-center">عاطفه اسدی</h1>
+              </div>
+              {/* history activity */}
+              <div className="mt-10">
+                <div className="w-full flex flex-row-reverse justify-around">
+                  <h1>{"<"} تاریخچه فعالیت</h1>
+                  <h1 className="text-orange-400">0</h1>
                 </div>
               </div>
             </div>
-          );
-        })}
+            {/* logout */}
+            <div className="absolute bottom-10 w-full">
+              <h1 className="cursor-pointer text-red-500 text-center">خروج از حساب کاربری</h1>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="w-full h-1/2 bg-[#A1BEE54F]"></div>
-    </div>
+    );
+  }
+
+  return (
+    <>
+      {options.map((option, index) => {
+        const isHovered = hoveredOption === option.name;
+        const innerShadowStyle = isHovered
+          ? { boxShadow: "inset 0 0 30px rgba(0, 0, 0, 0.2)" }
+          : {};
+
+        return (
+          <div
+            className="option-container"
+            key={index}
+            onMouseEnter={() => setHoveredOption(option.name)}
+            onMouseLeave={() => setHoveredOption(null)}
+            onClick={() => {
+              optionClick(option.name);
+            }}
+          >
+            <div
+              className={`w-[354.33px] h-[354.33px] bg-white rounded-3xl cursor-pointer overflow-hidden shadow-2xl ${
+                isHovered ? "shadow-none" : ""
+              }`}
+              style={innerShadowStyle}
+            >
+              <div className="h-[70%] flex justify-center items-center">
+                <option.icon
+                  size={100}
+                  style={{ color: isHovered ? "#EE8D20" : "" }}
+                />
+              </div>
+              <div className="h-[30%] flex justify-center items-center">
+                <h1 style={{ color: isHovered ? "#EE8D20" : "" }}>
+                  {option.name}
+                </h1>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 }
