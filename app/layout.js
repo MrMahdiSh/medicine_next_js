@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import { Inter } from "next/font/google";
-import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import "./globals.css";
 
 // Importing the Inter font and specifying subsets

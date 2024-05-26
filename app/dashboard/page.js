@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { FaUserFriends, FaClipboardList, FaUser } from "react-icons/fa";
+import MainInput from "@/components/input";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("صفحه اصلی");
@@ -37,7 +38,46 @@ function Header({ title }) {
   );
 }
 
+const userInfo = {
+  user: [
+    {
+      name: "نام",
+      type: "text",
+      editable: "yes",
+    },
+    {
+      name: "نام خانوادگی",
+      type: "text",
+      editable: "yes",
+    },
+    {
+      name: "کدملی",
+      type: "number",
+      editable: "yes",
+    },
+    {
+      name: "phone",
+      type: "number",
+      editable: "no",
+    },
+  ],
+  doctor: {
+    name: "نام",
+    type: "text",
+  },
+  pharmacy: {
+    name: "نام",
+    type: "text",
+  },
+};
+
 function Content({ optionClick, pageName }) {
+  const [role, setRole] = useState(undefined);
+
+  useEffect(() => {
+    setRole(localStorage.getItem("user_role"));
+  }, []);
+
   const [hoveredOption, setHoveredOption] = useState(null);
 
   const options = [
@@ -45,38 +85,58 @@ function Content({ optionClick, pageName }) {
     { name: "اطلاعات شخصی", icon: FaUserFriends },
   ];
 
+  const userRole = role === "admin" ? "user" : role;
+
   if (pageName == "اطلاعات شخصی") {
     return (
       <div className="w-full h-[10px] mb-40 relative">
-        <div className="w-3/4 mx-auto flex flex-row gap-10 justify-around">
-          <div className="w-[70%]">
-            <div className="bg-white shadow-xl rounded-2xl"></div>
-          </div>
-          <div className="w-[30%] relative">
-            <div className="bg-white h-[80vh] shadow-xl rounded-2xl">
-              {/* user profile */}
-              <div className="h-[200px] w-full flex justify-center items-center">
-                <div className="rounded-full bg-gray-500 w-40 h-40 flex items-center justify-center">
-                  <FaUser color="white" size={"40%"} />
-                </div>
-              </div>
-              {/* name */}
-              <div className="mt-10">
-                <h1 className="text-center">عاطفه اسدی</h1>
-              </div>
-              {/* history activity */}
-              <div className="mt-10">
-                <div className="w-full flex flex-row-reverse justify-around">
-                  <h1>{"<"} تاریخچه فعالیت</h1>
-                  <h1 className="text-orange-400">0</h1>
-                </div>
+        <div className="w-3/4 mx-auto ">
+          <div className="w-full flex flex-row gap-10 justify-around">
+            <div className="w-[70%]">
+              <div className="bg-white shadow-xl rounded-2xl p-16">
+                {userInfo[userRole].map((user, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="w-full flex flex-col gap-5 mt-5"
+                    >
+                      <h1 className="text-right">:{user.name}</h1>
+                      <MainInput placeholder={user.name} type={user.type} />
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            {/* logout */}
-            <div className="absolute bottom-10 w-full">
-              <h1 className="cursor-pointer text-red-500 text-center">خروج از حساب کاربری</h1>
+            <div className="w-[30%] relative">
+              <div className="bg-white h-[80vh] shadow-xl rounded-2xl">
+                {/* user profile */}
+                <div className="h-[200px] w-full flex justify-center items-center">
+                  <div className="rounded-full bg-gray-500 w-40 h-40 flex items-center justify-center">
+                    <FaUser color="white" size={"40%"} />
+                  </div>
+                </div>
+                {/* name */}
+                <div className="mt-10">
+                  <h1 className="text-center">عاطفه اسدی</h1>
+                </div>
+                {/* history activity */}
+                <div className="mt-10">
+                  <div className="w-full flex flex-row-reverse justify-around">
+                    <h1>{"<"} تاریخچه فعالیت</h1>
+                    <h1 className="text-orange-400">0</h1>
+                  </div>
+                </div>
+              </div>
+              {/* logout */}
+              <div className="absolute bottom-10 w-full">
+                <h1 className="cursor-pointer text-red-500 text-center">
+                  خروج از حساب کاربری
+                </h1>
+              </div>
             </div>
           </div>
+          {/* extra space */}
+          <div className="w-full h-[100px]"></div>
         </div>
       </div>
     );
