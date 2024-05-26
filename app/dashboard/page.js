@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { FaUserFriends, FaClipboardList, FaUser } from "react-icons/fa";
 import MainInput from "@/components/input";
+import MainButton from "@/components/MainButton";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("صفحه اصلی");
@@ -105,6 +106,9 @@ function Content({ optionClick, pageName }) {
                     </div>
                   );
                 })}
+                <div className="flex justify-center items-center">
+                  <MainButton isLoading={false} text={"ثبت"} />
+                </div>
               </div>
             </div>
             <div className="w-[30%] relative">
