@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaUserFriends, FaClipboardList, FaUser } from "react-icons/fa";
 import MainInput from "@/components/input";
 import MainButton from "@/components/MainButton";
+import Table from "@/components/Table";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("صفحه اصلی");
@@ -87,6 +88,129 @@ function Content({ optionClick, pageName }) {
   ];
 
   const userRole = role === "admin" ? "user" : role;
+
+  const columns = [
+    "شناسه",
+    "شناسه کاربر",
+    "شناسه دکتر",
+    "نسخه",
+    "دلیل ارجاع",
+    "تاریخ ایجاد",
+    "تاریخ به‌روزرسانی",
+    "تعداد پذیرش",
+  ];
+
+  const rows = [
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    {
+      id: 1,
+      user_id: 1,
+      doctor_id: 2,
+      prescription: "1111",
+      reason_for_referral: "درد در سمت چپ سینه",
+      created_at: "2024-05-19T09:36:19.000000Z",
+      updated_at: "2024-05-19T09:36:19.000000Z",
+      accepted_count: 1,
+    },
+    // Add more rows as needed
+  ];
+
+  if (pageName == "تاریخچه گزارشات") {
+    return (
+      <div className="container mx-auto py-4">
+        <Table columns={columns} rows={rows} />
+      </div>
+    );
+  }
 
   if (pageName == "اطلاعات شخصی") {
     return (
