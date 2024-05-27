@@ -89,125 +89,42 @@ function Content({ optionClick, pageName }) {
 
   const userRole = role === "admin" ? "user" : role;
 
-  const columns = [
-    "شناسه",
-    "شناسه کاربر",
-    "شناسه دکتر",
-    "نسخه",
-    "دلیل ارجاع",
-    "تاریخ ایجاد",
-    "تاریخ به‌روزرسانی",
-    "تعداد پذیرش",
-  ];
+  const columns = ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"];
 
   const rows = [
     {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
+      doctor_id: "دکتر جلالی",
       prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
       created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
       accepted_count: 1,
+      actions: (
+        <button
+          onClick={() => alert("info")}
+          className="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-700"
+        >
+          نمایش جزئیات
+        </button>
+      ),
     },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
-    {
-      id: 1,
-      user_id: 1,
-      doctor_id: 2,
-      prescription: "1111",
-      reason_for_referral: "درد در سمت چپ سینه",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      updated_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-    },
+
     // Add more rows as needed
   ];
 
   if (pageName == "تاریخچه گزارشات") {
     return (
-      <div className="container mx-auto py-4">
-        <Table columns={columns} rows={rows} />
+      <div className="w-full h-[10px] mb-[26rem] relative">
+        <div className="w-3/4 mx-auto ">
+          <div className="container mx-auto py-4">
+            <button
+              onClick={() => optionClick("صفحه اصلی")}
+              className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
+            >
+              بازگشت
+            </button>
+
+            <Table columns={columns} rows={rows} />
+          </div>
+        </div>
       </div>
     );
   }
