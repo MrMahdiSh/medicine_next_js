@@ -5,7 +5,6 @@ export default function mainInput({
   isLoading,
   editable = true,
 }) {
-  console.log(type + "||" + placeholder);
   return (
     <div>
       <input

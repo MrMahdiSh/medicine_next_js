@@ -12,6 +12,8 @@ import MainInput from "@/components/input";
 import MainButton from "@/components/MainButton";
 import Table from "@/components/Table";
 import ROOT from "@/utils/ROOT";
+import { fetchData } from "@/utils/api";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("صفحه اصلی");
@@ -132,9 +134,20 @@ function Content({ optionClick, pageName }) {
 
   const [theUserDetail, setTheUserDetail] = useState(undefined);
 
+  const [userToken, setUserToken] = useState(undefined);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [prescriptionSubmited, setPrescriptionSubmited] = useState(false);
+
+  const [userAwailabality, setUserAwailablity] = useState(undefined);
+
+  const [newUserPhone, setNewUserPhone] = useState(undefined);
+
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
+    setUserToken(localStorage.getItem("token"));
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
@@ -197,7 +210,92 @@ function Content({ optionClick, pageName }) {
     },
   ];
 
+  async function IsUserAwailable() {
+    setIsLoading(true);
+    setPrescriptionSubmited(true);
+    try {
+      await fetchData(
+        "doctor/patient_info?meli_code" + "12654",
+        "GET",
+        null,
+        userToken,
+        true
+      );
+      WritePrescription();
+      setUserAwailablity(true);
+    } catch (e) {
+      setIsLoading(false);
+      setUserAwailablity(false);
+    }
+  }
+
+  async function NewUserPhone() {
+    try {
+      await fetchData(
+        "doctor/create_patient",
+        "POST",
+        {
+          meli_code: "",
+          phone: "",
+        },
+        userToken,
+        true
+      );
+    } catch (e) {
+      toast.error("مشکلی پیش آمده");
+    }
+  }
+
+  async function WritePrescription() {
+    try {
+      await fetchData(
+        "doctor/prescription",
+        "POST",
+        { meli_code: "", prescription: "", reason_for_referral: "" },
+        userToken
+      );
+      setPrescriptionSubmited(true);
+      setIsLoading(false);
+    } catch (e) {
+      setIsLoading(true);
+      toast.error("مشکلی پیش آمده");
+    }
+  }
+
   if (pageName == "ثبت نسخه") {
+    if (prescriptionSubmited && !isLoading) {
+      if (userAwailabality) {
+        return <div>success</div>;
+      } else {
+        return (
+          <>
+            <div className="w-full h-[10px] mb-[26rem] relative">
+              <div className="w-3/4 mx-auto ">
+                <div className="container mx-auto py-4">
+                  <div className="w-full bg-white rounded-3xl shadow-2xl p-10 text-right">
+                    <h1>لطفا شماره تماس بیمار را وارد کنید</h1>
+                    <MainInput
+                      type={"number"}
+                      theOnChange={(e) => {
+                        setNewUserPhone(e.target.value);
+                      }}
+                      placeholder={"شماره تماس"}
+                    />
+                    <MainButton
+                      onclick={() => {
+                        NewUserPhone();
+                      }}
+                      isLoading={isLoading}
+                      text={"ثبت"}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      }
+    }
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
         <div className="w-3/4 mx-auto ">
@@ -219,6 +317,7 @@ function Content({ optionClick, pageName }) {
                     <div className="min-w-[45%] m-0" key={index}>
                       {
                         <MainInput
+                          isLoading={isLoading}
                           type={prescription.type}
                           placeholder={prescription.name}
                         />
@@ -230,7 +329,13 @@ function Content({ optionClick, pageName }) {
               {
                 <div className="mt-5 flex flex-row-reverse">
                   <div>
-                    <MainButton isLoading={false} text={"ثبت"} />
+                    <MainButton
+                      onclick={() => {
+                        IsUserAwailable();
+                      }}
+                      isLoading={isLoading}
+                      text={"ثبت"}
+                    />
                   </div>
                 </div>
               }
