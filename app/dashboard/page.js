@@ -469,7 +469,6 @@ function Content({ optionClick, pageName }) {
     try {
       await fetchData("user/update", "PUT", UserInfo, userToken, true);
       const newData = await CheckUserLog();
-      console.log(newData);
       setTheUserDetail(newData);
       localStorage.setItem("user_details", JSON.stringify(newData));
       toast.success("با موفقیت انجام شد");
