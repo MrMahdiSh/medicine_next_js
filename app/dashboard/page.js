@@ -6,6 +6,7 @@ import { FaUserFriends, FaClipboardList, FaUser } from "react-icons/fa";
 import MainInput from "@/components/input";
 import MainButton from "@/components/MainButton";
 import Table from "@/components/Table";
+import ROOT from "@/utils/ROOT";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("صفحه اصلی");
@@ -33,7 +34,12 @@ function Header({ title }) {
       <div className="flex items-center gap-2">
         <h1>{title}</h1>
         <div style={{ width: "30px", height: "30px" }}>
-          <Image src="/dashboard/home.png" alt="Home" width={30} height={30} />
+          <Image
+            src={`${ROOT}/dashboard/home.png`}
+            alt="Home"
+            width={30}
+            height={30}
+          />
         </div>
       </div>
     </div>

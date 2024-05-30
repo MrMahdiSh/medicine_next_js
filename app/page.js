@@ -6,12 +6,13 @@ import MainButton from "@/components/MainButton";
 import { toast } from "react-toastify";
 import { fetchData } from "@/utils/api";
 import { useRouter } from "next/navigation";
+import ROOT from "@/utils/ROOT";
 
 export default function App() {
   return (
     <div
       className="flex items-center justify-center w-screen h-screen bg-cover bg-center"
-      style={{ backgroundImage: "url(/index/bg.jfif) " }}
+      style={{ backgroundImage: `url(${ROOT}/index/bg.jfif)` }}
     >
       <div className="w-full h-full bg-[#33629F4D] p-20 backdrop-blur-md">
         <div className="h-full w-1/2 bg-[#E0EBF9A6] rounded-lg p-10">
