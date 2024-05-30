@@ -14,6 +14,7 @@ import Table from "@/components/Table";
 import ROOT from "@/utils/ROOT";
 import { fetchData } from "@/utils/api";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("صفحه اصلی");
@@ -81,46 +82,55 @@ const userInfo = {
       name: "نام",
       type: "text",
       editable: true,
+      enName: "name",
     },
     {
       name: "نام خانوادگی",
       type: "text",
       editable: true,
+      enName: "last_name",
     },
     {
       name: "کدملی",
       type: "number",
       editable: true,
+      enName: "meli_code",
     },
     {
       name: "نوع تخصص",
       type: "text",
       editable: true,
+      enName: "",
     },
     {
       name: "شماره مطب",
       type: "number",
       editable: true,
+      enName: "true",
     },
     {
       name: "سوابق کاری",
       type: "text",
       editable: true,
+      enName: "true",
     },
     {
       name: "سوابق کاری",
       type: "text",
       editable: true,
+      enName: "true",
     },
     {
       name: "آدرس اینستاگرام",
       type: "text",
       editable: true,
+      enName: "true",
     },
     {
-      name: "phone",
+      name: "شماره تماس",
       type: "number",
       editable: false,
+      enName: "false",
     },
   ],
   pharmacy: {
@@ -170,6 +180,8 @@ function Content({ optionClick, pageName }) {
       return acc;
     }, {})
   );
+
+  const router = useRouter();
 
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
@@ -224,7 +236,7 @@ function Content({ optionClick, pageName }) {
     setPrescriptionSubmited(true);
     try {
       await fetchData(
-        "doctor/patient_info?meli_code" + inputValues["meli_code"],
+        "doctor/patient_info?meli_code=" + inputValues["meli_code"],
         "GET",
         null,
         userToken,
@@ -417,6 +429,10 @@ function Content({ optionClick, pageName }) {
     );
   }
 
+  function LogOut() {
+    router.push("/");
+  }
+
   if (pageName == "اطلاعات شخصی") {
     return (
       <div className="w-full h-[10px] mb-40 relative">
@@ -435,6 +451,7 @@ function Content({ optionClick, pageName }) {
                         editable={user.editable}
                         placeholder={user.name}
                         type={user.type}
+                        val={theUserDetail[user.enName] ?? ""}
                       />
                     </div>
                   );
@@ -452,8 +469,8 @@ function Content({ optionClick, pageName }) {
                 </div>
               </div>
             </div>
-            <div className="w-[30%] relative">
-              <div className="bg-white h-[80vh] shadow-xl rounded-2xl">
+            <div className="w-[30%]">
+              <div className="bg-white h-[80vh] shadow-xl rounded-2xl relative">
                 {/* user profile */}
                 <div className="h-[200px] w-full flex justify-center items-center">
                   <div className="rounded-full bg-gray-500 w-40 h-40 flex items-center justify-center">
@@ -471,12 +488,12 @@ function Content({ optionClick, pageName }) {
                     <h1 className="text-orange-400">0</h1>
                   </div>
                 </div>
-              </div>
-              {/* logout */}
-              <div className="absolute bottom-10 w-full">
-                <h1 className="cursor-pointer text-red-500 text-center">
-                  خروج از حساب کاربری
-                </h1>
+                {/* logout */}
+                <div onClick={LogOut} className="absolute bottom-10 w-full">
+                  <h1 className="cursor-pointer text-red-500 text-center">
+                    خروج از حساب کاربری
+                  </h1>
+                </div>
               </div>
             </div>
           </div>
