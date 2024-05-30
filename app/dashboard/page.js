@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { FaUserFriends, FaClipboardList, FaUser } from "react-icons/fa";
+import {
+  FaUserFriends,
+  FaClipboardList,
+  FaUser,
+  FaClinicMedical,
+} from "react-icons/fa";
 import MainInput from "@/components/input";
 import MainButton from "@/components/MainButton";
 import Table from "@/components/Table";
@@ -134,10 +139,22 @@ function Content({ optionClick, pageName }) {
 
   const [hoveredOption, setHoveredOption] = useState(null);
 
-  const options = [
-    { name: "تاریخچه گزارشات", icon: FaClipboardList },
-    { name: "اطلاعات شخصی", icon: FaUserFriends },
-  ];
+  const options = {
+    doctor: [
+      {
+        name: "تاریخچه گزارشات",
+        icon: FaClipboardList,
+      },
+      {
+        name: "ثبت نسخه",
+        icon: FaClinicMedical,
+      },
+      {
+        name: "اطلاعات شخصی",
+        icon: FaUserFriends,
+      },
+    ],
+  };
 
   const userRole = role === "admin" ? "user" : role;
 
@@ -161,6 +178,68 @@ function Content({ optionClick, pageName }) {
 
     // Add more rows as needed
   ];
+
+  const prescirptionDetails = [
+    {
+      name: "کدملی",
+      type: "number",
+      enName: "meli_code",
+    },
+    {
+      name: "نسخه",
+      type: "number",
+      enName: "meli_code",
+    },
+    {
+      name: "دلیل مراجعه",
+      type: "text",
+      enName: "meli_code",
+    },
+  ];
+
+  if (pageName == "ثبت نسخه") {
+    return (
+      <div className="w-full h-[10px] mb-[26rem] relative">
+        <div className="w-3/4 mx-auto ">
+          <div className="container mx-auto py-4">
+            <button
+              onClick={() => optionClick("صفحه اصلی")}
+              className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
+            >
+              بازگشت
+            </button>
+
+            <div className="w-full bg-white rounded-3xl shadow-2xl p-10">
+              <div
+                style={{ direction: "rtl" }}
+                className="flex flex-wrap justify-between gap-10"
+              >
+                {prescirptionDetails.map((prescription, index) => {
+                  return (
+                    <div className="min-w-[45%] m-0" key={index}>
+                      {
+                        <MainInput
+                          type={prescription.type}
+                          placeholder={prescription.name}
+                        />
+                      }
+                    </div>
+                  );
+                })}
+              </div>
+              {
+                <div className="mt-5 flex flex-row-reverse">
+                  <div>
+                    <MainButton isLoading={false} text={"ثبت"} />
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (pageName == "تاریخچه گزارشات") {
     return (
@@ -203,7 +282,7 @@ function Content({ optionClick, pageName }) {
                     </div>
                   );
                 })}
-                <div className="flex justify-center items-center">
+                <div className="flex justify-around gap-5">
                   <MainButton
                     color={"#ef4444"}
                     isLoading={false}
@@ -253,43 +332,44 @@ function Content({ optionClick, pageName }) {
 
   return (
     <>
-      {options.map((option, index) => {
-        const isHovered = hoveredOption === option.name;
-        const innerShadowStyle = isHovered
-          ? { boxShadow: "inset 0 0 30px rgba(0, 0, 0, 0.2)" }
-          : {};
+      {userRole != undefined &&
+        options[userRole].map((option, index) => {
+          const isHovered = hoveredOption === option.name;
+          const innerShadowStyle = isHovered
+            ? { boxShadow: "inset 0 0 30px rgba(0, 0, 0, 0.2)" }
+            : {};
 
-        return (
-          <div
-            className="option-container"
-            key={index}
-            onMouseEnter={() => setHoveredOption(option.name)}
-            onMouseLeave={() => setHoveredOption(null)}
-            onClick={() => {
-              optionClick(option.name);
-            }}
-          >
+          return (
             <div
-              className={`w-[354.33px] h-[354.33px] bg-white rounded-3xl cursor-pointer overflow-hidden shadow-2xl ${
-                isHovered ? "shadow-none" : ""
-              }`}
-              style={innerShadowStyle}
+              className="option-container"
+              key={index}
+              onMouseEnter={() => setHoveredOption(option.name)}
+              onMouseLeave={() => setHoveredOption(null)}
+              onClick={() => {
+                optionClick(option.name);
+              }}
             >
-              <div className="h-[70%] flex justify-center items-center">
-                <option.icon
-                  size={100}
-                  style={{ color: isHovered ? "#EE8D20" : "" }}
-                />
-              </div>
-              <div className="h-[30%] flex justify-center items-center">
-                <h1 style={{ color: isHovered ? "#EE8D20" : "" }}>
-                  {option.name}
-                </h1>
+              <div
+                className={`w-[354.33px] h-[354.33px] bg-white rounded-3xl cursor-pointer overflow-hidden shadow-2xl ${
+                  isHovered ? "shadow-none" : ""
+                }`}
+                style={innerShadowStyle}
+              >
+                <div className="h-[70%] flex justify-center items-center">
+                  <option.icon
+                    size={100}
+                    style={{ color: isHovered ? "#EE8D20" : "" }}
+                  />
+                </div>
+                <div className="h-[30%] flex justify-center items-center">
+                  <h1 style={{ color: isHovered ? "#EE8D20" : "" }}>
+                    {option.name}
+                  </h1>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
     </>
   );
 }
