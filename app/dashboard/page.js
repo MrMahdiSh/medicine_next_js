@@ -100,43 +100,65 @@ const userInfo = {
       name: "نوع تخصص",
       type: "text",
       editable: true,
-      enName: "",
-    },
-    {
-      name: "شماره مطب",
-      type: "number",
-      editable: true,
-      enName: "true",
-    },
-    {
-      name: "سوابق کاری",
-      type: "text",
-      editable: true,
-      enName: "true",
-    },
-    {
-      name: "سوابق کاری",
-      type: "text",
-      editable: true,
-      enName: "true",
+      enName: "expertise",
     },
     {
       name: "آدرس اینستاگرام",
       type: "text",
       editable: true,
-      enName: "true",
+      enName: "instagram",
     },
     {
       name: "شماره تماس",
       type: "number",
       editable: false,
-      enName: "false",
+      enName: "phone",
     },
   ],
-  pharmacy: {
-    name: "نام",
-    type: "text",
-  },
+  pharmacy: [
+    {
+      name: "نام",
+      type: "text",
+      editable: true,
+      enName: "name",
+    },
+    {
+      name: "نام خانوادگی",
+      type: "text",
+      editable: true,
+      enName: "last_name",
+    },
+    {
+      name: "آدرس اینستاگرام",
+      type: "text",
+      editable: true,
+      enName: "instagram",
+    },
+    {
+      name: "آدرس",
+      type: "text",
+      editable: true,
+      enName: "address",
+    },
+    {
+      name: "کد مسئول فنی",
+      type: "text",
+      editable: true,
+      enName: "technical_assistant_code",
+    },
+    {
+      name: "جواز مطب",
+      type: "text",
+      editable: true,
+      enName: "Office_license",
+    },
+    {
+      name: "شماره تماس",
+      type: "number",
+      editable: false,
+      enName: "phone",
+    },
+  ],
 };
 
 function Content({ optionClick, pageName }) {
