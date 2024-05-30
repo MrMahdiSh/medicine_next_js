@@ -144,6 +144,33 @@ function Content({ optionClick, pageName }) {
 
   const [newUserPhone, setNewUserPhone] = useState(undefined);
 
+  const [prescriptionDone, setPredcriptionDone] = useState(false);
+
+  const prescirptionDetails = [
+    {
+      name: "کدملی",
+      type: "number",
+      enName: "meli_code",
+    },
+    {
+      name: "نسخه",
+      type: "number",
+      enName: "prescription",
+    },
+    {
+      name: "دلیل مراجعه",
+      type: "text",
+      enName: "reason_for_referral",
+    },
+  ];
+
+  const [inputValues, setInputValues] = useState(
+    prescirptionDetails.reduce((acc, detail) => {
+      acc[detail.enName] = "";
+      return acc;
+    }, {})
+  );
+
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
@@ -192,30 +219,12 @@ function Content({ optionClick, pageName }) {
     // Add more rows as needed
   ];
 
-  const prescirptionDetails = [
-    {
-      name: "کدملی",
-      type: "number",
-      enName: "meli_code",
-    },
-    {
-      name: "نسخه",
-      type: "number",
-      enName: "meli_code",
-    },
-    {
-      name: "دلیل مراجعه",
-      type: "text",
-      enName: "meli_code",
-    },
-  ];
-
   async function IsUserAwailable() {
     setIsLoading(true);
     setPrescriptionSubmited(true);
     try {
       await fetchData(
-        "doctor/patient_info?meli_code" + "12654",
+        "doctor/patient_info?meli_code" + inputValues["meli_code"],
         "GET",
         null,
         userToken,
@@ -235,13 +244,15 @@ function Content({ optionClick, pageName }) {
         "doctor/create_patient",
         "POST",
         {
-          meli_code: "",
-          phone: "",
+          meli_code: inputValues["meli_code"],
+          phone: newUserPhone,
         },
         userToken,
         true
       );
+      WritePrescription();
     } catch (e) {
+      setIsLoading(false);
       toast.error("مشکلی پیش آمده");
     }
   }
@@ -251,10 +262,14 @@ function Content({ optionClick, pageName }) {
       await fetchData(
         "doctor/prescription",
         "POST",
-        { meli_code: "", prescription: "", reason_for_referral: "" },
+        {
+          meli_code: inputValues["meli_code"],
+          prescription: inputValues["prescription"],
+          reason_for_referral: inputValues["reason_for_referral"],
+        },
         userToken
       );
-      setPrescriptionSubmited(true);
+      setPredcriptionDone(true);
       setIsLoading(false);
     } catch (e) {
       setIsLoading(true);
@@ -262,39 +277,73 @@ function Content({ optionClick, pageName }) {
     }
   }
 
+  const handleInputChange = (e, enName) => {
+    setInputValues({
+      ...inputValues,
+      [enName]: e.target.value,
+    });
+  };
+
+  function ResetPrescription() {
+    optionClick("صفحه اصلی");
+    setIsLoading(false);
+    setPrescriptionSubmited(false);
+    setUserAwailablity(false);
+    setNewUserPhone(undefined);
+    setPredcriptionDone(false);
+  }
+
   if (pageName == "ثبت نسخه") {
-    if (prescriptionSubmited && !isLoading) {
-      if (userAwailabality) {
-        return <div>success</div>;
-      } else {
-        return (
-          <>
-            <div className="w-full h-[10px] mb-[26rem] relative">
-              <div className="w-3/4 mx-auto ">
-                <div className="container mx-auto py-4">
-                  <div className="w-full bg-white rounded-3xl shadow-2xl p-10 text-right">
-                    <h1>لطفا شماره تماس بیمار را وارد کنید</h1>
-                    <MainInput
-                      type={"number"}
-                      theOnChange={(e) => {
-                        setNewUserPhone(e.target.value);
-                      }}
-                      placeholder={"شماره تماس"}
-                    />
-                    <MainButton
-                      onclick={() => {
-                        NewUserPhone();
-                      }}
-                      isLoading={isLoading}
-                      text={"ثبت"}
-                    />
-                  </div>
+    if (prescriptionSubmited && !isLoading && prescriptionDone) {
+      return (
+        <>
+          <div className="w-full h-[10px] mb-[26rem] relative">
+            <div className="w-3/4 mx-auto ">
+              <div className="container mx-auto py-4">
+                <div className="w-full bg-white rounded-3xl shadow-2xl p-10 text-center">
+                  <button
+                    onClick={() => ResetPrescription()}
+                    className="bg-green-400 text-white py-2 px-4 rounded hover:bg-green-500 mb-10"
+                  >
+                    صفحه اصلی
+                  </button>
+
+                  <h1>با موفقیت ثبت شد</h1>
                 </div>
               </div>
             </div>
-          </>
-        );
-      }
+          </div>
+        </>
+      );
+    }
+    if (prescriptionSubmited && !isLoading && !userAwailabality) {
+      return (
+        <>
+          <div className="w-full h-[10px] mb-[26rem] relative">
+            <div className="w-3/4 mx-auto ">
+              <div className="container mx-auto py-4">
+                <div className="w-full bg-white rounded-3xl shadow-2xl p-10 text-right">
+                  <h1>لطفا شماره تماس بیمار را وارد کنید</h1>
+                  <MainInput
+                    type={"number"}
+                    theOnChange={(e) => {
+                      setNewUserPhone(e.target.value);
+                    }}
+                    placeholder={"شماره تماس"}
+                  />
+                  <MainButton
+                    onclick={() => {
+                      NewUserPhone();
+                    }}
+                    isLoading={isLoading}
+                    text={"ثبت"}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      );
     }
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
@@ -317,6 +366,9 @@ function Content({ optionClick, pageName }) {
                     <div className="min-w-[45%] m-0" key={index}>
                       {
                         <MainInput
+                          theOnChange={(e) =>
+                            handleInputChange(e, prescription.enName)
+                          }
                           isLoading={isLoading}
                           type={prescription.type}
                           placeholder={prescription.name}
