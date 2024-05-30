@@ -15,6 +15,7 @@ import ROOT from "@/utils/ROOT";
 import { fetchData } from "@/utils/api";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import CheckUserLog from "@/utils/auth";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("صفحه اصلی");
@@ -232,6 +233,8 @@ function Content({ optionClick, pageName }) {
 
   const userRole = role === "admin" ? "user" : role;
 
+  const [UserInfo, setUserInfo] = useState([]);
+
   const columns = ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"];
 
   const rows = [
@@ -314,6 +317,13 @@ function Content({ optionClick, pageName }) {
   const handleInputChange = (e, enName) => {
     setInputValues({
       ...inputValues,
+      [enName]: e.target.value,
+    });
+  };
+
+  const handleUserInfoUpdate = (e, enName) => {
+    setUserInfo({
+      ...UserInfo,
       [enName]: e.target.value,
     });
   };
@@ -455,6 +465,21 @@ function Content({ optionClick, pageName }) {
     router.push("/");
   }
 
+  async function UpdateUserInfo() {
+    try {
+      await fetchData("user/update", "PUT", UserInfo, userToken, true);
+      const newData = await CheckUserLog();
+      console.log(newData);
+      setTheUserDetail(newData);
+      localStorage.setItem("user_details", JSON.stringify(newData));
+      toast.success("با موفقیت انجام شد");
+      optionClick("صفحه اصلی");
+    } catch (e) {
+      console.log(e);
+      toast.error("مشکلی پیش آمده");
+    }
+  }
+
   if (pageName == "اطلاعات شخصی") {
     return (
       <div className="w-full h-[10px] mb-40 relative">
@@ -470,6 +495,9 @@ function Content({ optionClick, pageName }) {
                     >
                       <h1 className="text-right">:{user.name}</h1>
                       <MainInput
+                        theOnChange={(e) => {
+                          handleUserInfoUpdate(e, user.enName);
+                        }}
                         editable={user.editable}
                         placeholder={user.name}
                         type={user.type}
@@ -487,7 +515,13 @@ function Content({ optionClick, pageName }) {
                       optionClick("صفحه اصلی");
                     }}
                   />
-                  <MainButton isLoading={false} text={"ثبت"} />
+                  <MainButton
+                    onclick={() => {
+                      UpdateUserInfo();
+                    }}
+                    isLoading={false}
+                    text={"ثبت"}
+                  />
                 </div>
               </div>
             </div>
