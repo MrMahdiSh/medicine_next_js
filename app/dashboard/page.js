@@ -51,28 +51,71 @@ const userInfo = {
     {
       name: "نام",
       type: "text",
-      editable: "yes",
+      editable: true,
     },
     {
       name: "نام خانوادگی",
       type: "text",
-      editable: "yes",
+      editable: true,
     },
     {
       name: "کدملی",
       type: "number",
-      editable: "yes",
+      editable: true,
     },
     {
       name: "phone",
       type: "number",
-      editable: "no",
+      editable: false,
     },
   ],
-  doctor: {
-    name: "نام",
-    type: "text",
-  },
+  doctor: [
+    {
+      name: "نام",
+      type: "text",
+      editable: true,
+    },
+    {
+      name: "نام خانوادگی",
+      type: "text",
+      editable: true,
+    },
+    {
+      name: "کدملی",
+      type: "number",
+      editable: true,
+    },
+    {
+      name: "نوع تخصص",
+      type: "text",
+      editable: true,
+    },
+    {
+      name: "شماره مطب",
+      type: "number",
+      editable: true,
+    },
+    {
+      name: "سوابق کاری",
+      type: "text",
+      editable: true,
+    },
+    {
+      name: "سوابق کاری",
+      type: "text",
+      editable: true,
+    },
+    {
+      name: "آدرس اینستاگرام",
+      type: "text",
+      editable: true,
+    },
+    {
+      name: "phone",
+      type: "number",
+      editable: false,
+    },
+  ],
   pharmacy: {
     name: "نام",
     type: "text",
@@ -82,8 +125,11 @@ const userInfo = {
 function Content({ optionClick, pageName }) {
   const [role, setRole] = useState(undefined);
 
+  const [theUserDetail, setTheUserDetail] = useState(undefined);
+
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
+    setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
@@ -149,11 +195,23 @@ function Content({ optionClick, pageName }) {
                       className="w-full flex flex-col gap-5 mt-5"
                     >
                       <h1 className="text-right">:{user.name}</h1>
-                      <MainInput placeholder={user.name} type={user.type} />
+                      <MainInput
+                        editable={user.editable}
+                        placeholder={user.name}
+                        type={user.type}
+                      />
                     </div>
                   );
                 })}
                 <div className="flex justify-center items-center">
+                  <MainButton
+                    color={"#ef4444"}
+                    isLoading={false}
+                    text={"لغو"}
+                    onclick={() => {
+                      optionClick("صفحه اصلی");
+                    }}
+                  />
                   <MainButton isLoading={false} text={"ثبت"} />
                 </div>
               </div>
@@ -168,7 +226,7 @@ function Content({ optionClick, pageName }) {
                 </div>
                 {/* name */}
                 <div className="mt-10">
-                  <h1 className="text-center">عاطفه اسدی</h1>
+                  <h1 className="text-center">{theUserDetail.name}</h1>
                 </div>
                 {/* history activity */}
                 <div className="mt-10">

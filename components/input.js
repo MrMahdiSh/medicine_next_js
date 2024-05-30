@@ -3,6 +3,7 @@ export default function mainInput({
   type,
   theOnChange,
   isLoading,
+  editable = true,
 }) {
   return (
     <div>
@@ -12,6 +13,7 @@ export default function mainInput({
         placeholder={placeholder}
         onChange={theOnChange}
         disabled={isLoading}
+        readOnly={!editable}
       ></input>
     </div>
   );

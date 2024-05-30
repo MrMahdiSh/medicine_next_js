@@ -1,8 +1,14 @@
-export default function MainButton({ onclick, text, isLoading }) {
+export default function MainButton({
+  onclick,
+  text,
+  isLoading,
+  color = "#EE8D20",
+}) {
   return (
     <button
       onClick={isLoading == false ? onclick : () => {}}
-      className="bg-[#EE8D20] mx-auto w-[300px] h-[50px] mt-10 rounded-lg text-white"
+      className={`mx-auto w-[300px] h-[50px] mt-10 rounded-lg text-white`}
+      style={{ backgroundColor: `${color}` }}
     >
       {isLoading == false ? text : "درحال بارگیری"}
     </button>
