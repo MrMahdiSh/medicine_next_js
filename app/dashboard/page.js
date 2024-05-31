@@ -179,6 +179,7 @@ function Content({ optionClick, pageName }) {
 
   const [prescriptionDone, setPredcriptionDone] = useState(false);
 
+  // user behavior
   const prescirptionDetails = [
     {
       name: "کدملی",
@@ -209,6 +210,7 @@ function Content({ optionClick, pageName }) {
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
+    getUserBehavior();
     setUserToken(localStorage.getItem("token"));
   }, []);
 
@@ -217,7 +219,7 @@ function Content({ optionClick, pageName }) {
   const options = {
     doctor: [
       {
-        name: "تاریخچه گزارشات",
+        name: "تاریخچه",
         icon: FaClipboardList,
       },
       {
@@ -235,26 +237,13 @@ function Content({ optionClick, pageName }) {
 
   const [UserInfo, setUserInfo] = useState([]);
 
-  const columns = ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"];
+  const columns = {
+    doctor: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
+    patient: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
+    pharmacy: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
+  };
 
-  const rows = [
-    {
-      doctor_id: "دکتر جلالی",
-      prescription: "1111",
-      created_at: "2024-05-19T09:36:19.000000Z",
-      accepted_count: 1,
-      actions: (
-        <button
-          onClick={() => alert("info")}
-          className="bg-blue-500 text-white py-1 px-2 rounded hover:bg-blue-700"
-        >
-          نمایش جزئیات
-        </button>
-      ),
-    },
-
-    // Add more rows as needed
-  ];
+  const [rows, setRows] = useState([]);
 
   async function IsUserAwailable() {
     setIsLoading(true);
@@ -335,6 +324,29 @@ function Content({ optionClick, pageName }) {
     setUserAwailablity(false);
     setNewUserPhone(undefined);
     setPredcriptionDone(false);
+  }
+
+  async function getUserBehavior() {
+    try {
+      const userBehave = await fetchData(
+        "doctor/history",
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+
+      const filteredData = userBehave.map((behave) => {
+        const filteredData = {};
+        columns[userRole].forEach((column) => {
+          if (behave[column] !== undefined) {
+            filteredData[column] = behave[column];
+          }
+        });
+        return filteredData;
+      });
+
+      setRows(filteredData);
+    } catch (e) {}
   }
 
   if (pageName == "ثبت نسخه") {
@@ -442,7 +454,7 @@ function Content({ optionClick, pageName }) {
     );
   }
 
-  if (pageName == "تاریخچه گزارشات") {
+  if (pageName == "تاریخچه") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
         <div className="w-3/4 mx-auto ">
@@ -454,7 +466,9 @@ function Content({ optionClick, pageName }) {
               بازگشت
             </button>
 
-            <Table columns={columns} rows={rows} />
+            {rows && userRole && (
+              <Table columns={columns[userRole]} rows={rows} />
+            )}
           </div>
         </div>
       </div>
