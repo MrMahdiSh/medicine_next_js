@@ -16,6 +16,7 @@ import { fetchData } from "@/utils/api";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import CheckUserLog from "@/utils/auth";
+import Modal from "react-modal";
 
 export default function Dashboard() {
   const [title, setTitle] = useState("صفحه اصلی");
@@ -222,6 +223,8 @@ function Content({ optionClick, pageName }) {
 
   const [theCount, setTheCount] = useState(0);
 
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
   // user behavior
   const prescirptionDetails = [
     {
@@ -426,8 +429,6 @@ function Content({ optionClick, pageName }) {
         });
       }
 
-      console.log("1");
-
       if (temperoryUserRole == "user") {
         var filteredData = userBehave["prescriptions"].map((behave) => {
           return {
@@ -439,7 +440,7 @@ function Content({ optionClick, pageName }) {
             action: (
               <button
                 onClick={() => {
-                  alert(behave.id);
+                  setModalIsOpen(true);
                 }}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
@@ -580,6 +581,10 @@ function Content({ optionClick, pageName }) {
     );
   }
 
+  const presDetailsCol = ["آدرس", "عملگر"];
+
+  // const rows = ["آدرس","عملگر"];
+
   if (pageName == "نسخه ها") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
@@ -591,6 +596,27 @@ function Content({ optionClick, pageName }) {
             >
               بازگشت
             </button>
+
+            <Modal
+              isOpen={modalIsOpen}
+              onRequestClose={() => setModalIsOpen(false)}
+              className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75"
+              overlayClassName="fixed inset-0"
+            >
+              <div className="bg-white w-[85%] p-10 rounded-lg shadow-lg">
+                <h1 className="text-right mb-5">لیست داروخانه ها</h1>
+                <Table
+                  columns={presDetailsCol}
+                  rows={[{ name: "fsd", s: "sd" }]}
+                />
+                <button
+                  className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                  onClick={() => setModalIsOpen(false)}
+                >
+                  خروج
+                </button>
+              </div>
+            </Modal>
 
             {rows && userRole && (
               <Table columns={columns[userRole]} rows={rows} />
