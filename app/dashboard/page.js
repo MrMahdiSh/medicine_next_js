@@ -24,6 +24,45 @@ export default function Dashboard() {
     setTitle(name);
   }
 
+  const [userValid, setUserValid] = useState(undefined);
+
+  const router = useRouter();
+
+  async function checkUserLog() {
+    try {
+      const data = await fetchData(
+        "User/me",
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+
+      console.log(data);
+
+      localStorage.setItem("user_details", JSON.stringify(data));
+
+      setUserValid(true);
+    } catch (error) {
+      setUserValid(false);
+    }
+  }
+
+  useState(() => {
+    checkUserLog();
+  }, []);
+
+  if (userValid == false) {
+    router.push("/");
+  }
+
+  if (!userValid) {
+    return (
+      <div className="w-screen h-screen flex justify-center items-center">
+        لطفا صبر کنید
+      </div>
+    );
+  }
+
   return (
     <div className="h-dvh">
       <Header title={title} />
@@ -61,21 +100,25 @@ const userInfo = {
       name: "نام",
       type: "text",
       editable: true,
+      enName: "name",
     },
     {
       name: "نام خانوادگی",
       type: "text",
       editable: true,
+      enName: "last_name",
     },
     {
       name: "کدملی",
       type: "number",
       editable: true,
+      enName: "meli_code",
     },
     {
-      name: "phone",
+      name: "شماره",
       type: "number",
       editable: false,
+      enName: "phone",
     },
   ],
   doctor: [
@@ -234,6 +277,30 @@ function Content({ optionClick, pageName }) {
         icon: FaUserFriends,
       },
     ],
+    user: [
+      {
+        name: "نسخه ها",
+        icon: FaClipboardList,
+      },
+      {
+        name: "اطلاعات شخصی",
+        icon: FaUserFriends,
+      },
+    ],
+    pharmacy: [
+      {
+        name: "تاریخچه",
+        icon: FaClipboardList,
+      },
+      {
+        name: "ثبت نسخه",
+        icon: FaClinicMedical,
+      },
+      {
+        name: "اطلاعات شخصی",
+        icon: FaUserFriends,
+      },
+    ],
   };
 
   const userRole = role === "admin" ? "user" : role;
@@ -242,7 +309,7 @@ function Content({ optionClick, pageName }) {
 
   const columns = {
     doctor: ["نسخه", "دلیل مراجعه", "تاریخ"],
-    patient: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
+    user: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
     pharmacy: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
   };
 
@@ -479,6 +546,27 @@ function Content({ optionClick, pageName }) {
     );
   }
 
+  if (pageName == "نسخه ها") {
+    return (
+      <div className="w-full h-[10px] mb-[26rem] relative">
+        <div className="w-3/4 mx-auto ">
+          <div className="container mx-auto py-4">
+            <button
+              onClick={() => optionClick("صفحه اصلی")}
+              className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
+            >
+              بازگشت
+            </button>
+
+            {rows && userRole && (
+              <Table columns={columns[userRole]} rows={rows} />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   function LogOut() {
     router.push("/");
   }
@@ -499,8 +587,13 @@ function Content({ optionClick, pageName }) {
 
   async function get_doctor_history_count() {
     try {
-      const docy = await fetchData("doctor/history", "GET", null, localStorage.getItem('token'));
-      setDoctorCount(docy['doctor_history']);
+      const docy = await fetchData(
+        "doctor/history",
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+      setDoctorCount(docy["doctor_history"]);
     } catch (error) {}
   }
 
