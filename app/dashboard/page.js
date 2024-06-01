@@ -222,7 +222,7 @@ function Content({ optionClick, pageName }) {
 
   const [prescriptionDone, setPredcriptionDone] = useState(false);
 
-  const [doctorCount, setDoctorCount] = useState(0);
+  const [theCount, setTheCount] = useState(0);
 
   // user behavior
   const prescirptionDetails = [
@@ -257,7 +257,7 @@ function Content({ optionClick, pageName }) {
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
     getUserBehavior();
     setUserToken(localStorage.getItem("token"));
-    get_doctor_history_count();
+    history_count();
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
@@ -585,15 +585,28 @@ function Content({ optionClick, pageName }) {
     }
   }
 
-  async function get_doctor_history_count() {
+  const historyURL = {
+    user: "patient/patientHistory",
+    doctor: "",
+    pharmacy: "",
+  };
+
+  async function history_count() {
+    const temperoryUserRole = localStorage.getItem("user_role");
     try {
       const docy = await fetchData(
-        "doctor/history",
+        temperoryUserRole == "doctor"
+          ? "doctor/history"
+          : temperoryUserRole == "user"
+          ? "patient/patientHistory"
+          : "",
         "GET",
         null,
         localStorage.getItem("token")
       );
-      setDoctorCount(docy["doctor_history"]);
+      temperoryUserRole == "doctor"
+        ? setTheCount(docy["doctor_history"])
+        : setTheCount(docy["user_history"]);
     } catch (error) {}
   }
 
@@ -660,7 +673,7 @@ function Content({ optionClick, pageName }) {
                 <div className="mt-10">
                   <div className="w-full flex flex-row-reverse justify-around">
                     <h1>{"<"} تاریخچه فعالیت</h1>
-                    <h1 className="text-orange-400">{doctorCount}</h1>
+                    <h1 className="text-orange-400">{theCount}</h1>
                   </div>
                 </div>
                 {/* logout */}
