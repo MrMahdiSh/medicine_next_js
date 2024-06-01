@@ -238,9 +238,13 @@ function Content({ optionClick, pageName }) {
   const [UserInfo, setUserInfo] = useState([]);
 
   const columns = {
-    doctor: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
+    doctor: ["نسخه", "دلیل مراجعه", "تاریخ"],
     patient: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
     pharmacy: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
+  };
+
+  const rowsEnName = {
+    doctor: ["prescription", "reason_for_referral", "created_at"],
   };
 
   const [rows, setRows] = useState([]);
@@ -336,13 +340,14 @@ function Content({ optionClick, pageName }) {
       );
 
       const filteredData = userBehave.map((behave) => {
-        const filteredData = {};
-        columns[userRole].forEach((column) => {
-          if (behave[column] !== undefined) {
-            filteredData[column] = behave[column];
-          }
-        });
-        return filteredData;
+        return {
+          // Define what properties you want to keep here
+          // For example:
+          prescription: behave.prescription,
+          reason_for_referral: behave.reason_for_referral,
+          created_at: behave.created_at,
+          // Add more properties as needed
+        };
       });
 
       setRows(filteredData);
