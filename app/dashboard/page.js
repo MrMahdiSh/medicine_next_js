@@ -37,8 +37,6 @@ export default function Dashboard() {
         localStorage.getItem("token")
       );
 
-      console.log(data);
-
       localStorage.setItem("user_details", JSON.stringify(data));
 
       setUserValid(true);
@@ -309,7 +307,14 @@ function Content({ optionClick, pageName }) {
 
   const columns = {
     doctor: ["نسخه", "دلیل مراجعه", "تاریخ"],
-    user: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
+    user: [
+      "دکتر",
+      "نسخه",
+      "تاریخ",
+      "دلیل مراجعه",
+      "داروخانه های تایید شده",
+      "عملگر",
+    ],
     pharmacy: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
   };
 
@@ -397,24 +402,53 @@ function Content({ optionClick, pageName }) {
   }
 
   async function getUserBehavior() {
+    const temperoryUserRole = localStorage.getItem("user_role");
+
     try {
       const userBehave = await fetchData(
-        "doctor/history",
+        temperoryUserRole == "doctor"
+          ? "doctor/history"
+          : temperoryUserRole == "user"
+          ? "patient/patient_prescriptions"
+          : "",
         "GET",
         null,
         localStorage.getItem("token")
       );
 
-      const filteredData = userBehave["hist_details"].map((behave) => {
-        return {
-          // Define what properties you want to keep here
-          // For example:
-          prescription: behave.prescription,
-          reason_for_referral: behave.reason_for_referral,
-          created_at: behave.created_at,
-          // Add more properties as needed
-        };
-      });
+      if (temperoryUserRole == "doctor") {
+        var filteredData = userBehave["hist_details"].map((behave) => {
+          return {
+            prescription: behave.prescription,
+            reason_for_referral: behave.reason_for_referral,
+            created_at: behave.created_at,
+          };
+        });
+      }
+
+      console.log("1");
+
+      if (temperoryUserRole == "user") {
+        var filteredData = userBehave["prescriptions"].map((behave) => {
+          return {
+            doctor: behave.doctor,
+            prescription: behave.prescription,
+            created_at: behave.created_at,
+            reason_for_referral: behave.reason_for_referral,
+            submited: behave.accepted_count,
+            action: (
+              <button
+                onClick={() => {
+                  alert(behave.id);
+                }}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              >
+                داروخانه ها
+              </button>
+            ),
+          };
+        });
+      }
 
       setRows(filteredData);
     } catch (e) {}
@@ -580,7 +614,6 @@ function Content({ optionClick, pageName }) {
       toast.success("با موفقیت انجام شد");
       optionClick("صفحه اصلی");
     } catch (e) {
-      console.log(e);
       toast.error("مشکلی پیش آمده");
     }
   }
