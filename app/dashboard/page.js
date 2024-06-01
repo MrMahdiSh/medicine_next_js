@@ -179,6 +179,8 @@ function Content({ optionClick, pageName }) {
 
   const [prescriptionDone, setPredcriptionDone] = useState(false);
 
+  const [doctorCount, setDoctorCount] = useState(0);
+
   // user behavior
   const prescirptionDetails = [
     {
@@ -212,6 +214,7 @@ function Content({ optionClick, pageName }) {
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
     getUserBehavior();
     setUserToken(localStorage.getItem("token"));
+    get_doctor_history_count();
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
@@ -241,10 +244,6 @@ function Content({ optionClick, pageName }) {
     doctor: ["نسخه", "دلیل مراجعه", "تاریخ"],
     patient: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
     pharmacy: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
-  };
-
-  const rowsEnName = {
-    doctor: ["prescription", "reason_for_referral", "created_at"],
   };
 
   const [rows, setRows] = useState([]);
@@ -339,7 +338,7 @@ function Content({ optionClick, pageName }) {
         localStorage.getItem("token")
       );
 
-      const filteredData = userBehave.map((behave) => {
+      const filteredData = userBehave["hist_details"].map((behave) => {
         return {
           // Define what properties you want to keep here
           // For example:
@@ -498,6 +497,13 @@ function Content({ optionClick, pageName }) {
     }
   }
 
+  async function get_doctor_history_count() {
+    try {
+      const docy = await fetchData("doctor/history", "GET", null, localStorage.getItem('token'));
+      setDoctorCount(docy['doctor_history']);
+    } catch (error) {}
+  }
+
   if (pageName == "اطلاعات شخصی") {
     return (
       <div className="w-full h-[10px] mb-40 relative">
@@ -553,13 +559,15 @@ function Content({ optionClick, pageName }) {
                 </div>
                 {/* name */}
                 <div className="mt-10">
-                  <h1 className="text-center">{theUserDetail.name}</h1>
+                  <h1 className="text-center">
+                    {theUserDetail.name + " " + theUserDetail.last_name}
+                  </h1>
                 </div>
                 {/* history activity */}
                 <div className="mt-10">
                   <div className="w-full flex flex-row-reverse justify-around">
                     <h1>{"<"} تاریخچه فعالیت</h1>
-                    <h1 className="text-orange-400">0</h1>
+                    <h1 className="text-orange-400">{doctorCount}</h1>
                   </div>
                 </div>
                 {/* logout */}
