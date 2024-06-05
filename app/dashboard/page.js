@@ -225,6 +225,8 @@ function Content({ optionClick, pageName }) {
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
+  const [pharmaciesList, setPharmaciesList] = useState([]);
+
   // user behavior
   const prescirptionDetails = [
     {
@@ -404,6 +406,53 @@ function Content({ optionClick, pageName }) {
     setPredcriptionDone(false);
   }
 
+  async function fetchPharmacies(id) {
+    setPharmaciesList([]);
+
+    // fetch new one
+    const thePharmacies = await fetchData(
+      "patient/get_accepted_pharmacy_list/?prescription_id=" + id,
+      "GET",
+      null,
+      localStorage.getItem("token")
+    );
+
+    // filter
+    const filtered = thePharmacies.map((pharm) => {
+      return {
+        add: pharm.pharmacy_add,
+        action: (
+          <button
+            onClick={() => {
+              setModalIsOpen(false);
+              selectPharm(pharm.id);
+            }}
+            className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded"
+          >
+            تایید
+          </button>
+        ),
+      };
+    });
+
+    setPharmaciesList(filtered);
+  }
+
+  async function selectPharm(id) {
+    try {
+      await fetchData(
+        "patient/buy",
+        "POST",
+        { accepted_prescription_id: id },
+        localStorage.getItem("token"),
+        true
+      );
+      toast.success("با موفقیت انجام شد");
+    } catch (error) {
+      toast.error("مشکلی پیش آمده");
+    }
+  }
+
   async function getUserBehavior() {
     const temperoryUserRole = localStorage.getItem("user_role");
 
@@ -441,6 +490,8 @@ function Content({ optionClick, pageName }) {
               <button
                 onClick={() => {
                   setModalIsOpen(true);
+                  fetchPharmacies(behave.id);
+                  setPharmaciesList;
                 }}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
@@ -605,10 +656,7 @@ function Content({ optionClick, pageName }) {
             >
               <div className="bg-white w-[85%] p-10 rounded-lg shadow-lg">
                 <h1 className="text-right mb-5">لیست داروخانه ها</h1>
-                <Table
-                  columns={presDetailsCol}
-                  rows={[{ name: "fsd", s: "sd" }]}
-                />
+                <Table columns={presDetailsCol} rows={pharmaciesList} />
                 <button
                   className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
                   onClick={() => setModalIsOpen(false)}
