@@ -266,6 +266,10 @@ function Content({ optionClick, pageName }) {
     if (localStorage.getItem("user_role") == "pharmacy") {
       getPres();
     }
+    const intervalId = setInterval(getPres, 20000);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
