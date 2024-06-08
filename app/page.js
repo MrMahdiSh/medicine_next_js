@@ -14,8 +14,8 @@ export default function App() {
       className="flex items-center justify-center w-screen h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${ROOT}/index/bg.jfif)` }}
     >
-      <div className="w-full h-full bg-[#33629F4D] p-20 backdrop-blur-md">
-        <div className="h-full w-1/2 bg-[#E0EBF9A6] rounded-lg p-10">
+      <div className="w-full h-full bg-[#33629F4D] p-0 sm:p-20 backdrop-blur-md">
+        <div className="h-full w-full lg:w-1/2 bg-[#E0EBF9A6] sm:rounded-lg p-10">
           <Content />
         </div>
       </div>
