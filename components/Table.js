@@ -1,9 +1,19 @@
+import { useEffect, useRef } from "react";
 import { formatDate } from "../utils/formatDate";
 
 const Table = ({ columns, rows }) => {
+  const tableContainerRef = useRef(null);
+
+  useEffect(() => {
+    const container = tableContainerRef.current;
+    if (container) {
+      container.scrollLeft = container.scrollWidth;
+    }
+  }, []);
+
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full bg-white border border-gray-200 whitespace-nowrap">
+    <div ref={tableContainerRef} className="overflow-x-auto" style={{ direction: "rtl" }}>
+      <table className="min-w-full bg-white border border-gray-200 whitespace-nowrap" style={{ direction: "ltr" }}>
         <thead>
           <tr>
             {[...columns].reverse().map((column, index) => (
