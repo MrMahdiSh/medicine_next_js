@@ -3,7 +3,7 @@ import { formatDate } from "../utils/formatDate";
 const Table = ({ columns, rows }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full bg-white border border-gray-200">
+      <table className="min-w-full bg-white border border-gray-200 whitespace-nowrap">
         <thead>
           <tr>
             {[...columns].reverse().map((column, index) => (
