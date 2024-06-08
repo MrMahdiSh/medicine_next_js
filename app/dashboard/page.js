@@ -66,7 +66,7 @@ export default function Dashboard() {
     <div className="h-dvh">
       <Header title={title} />
       <div className="h-[440px] w-full relative">
-        <div className="w-full h-full absolute flex flex-row justify-around items-center">
+        <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-0 lg:flex-row justify-around items-center">
           <Content optionClick={handleOptionClick} pageName={title} />
         </div>
         <div className="w-full h-1/2 bg-[#A1BEE54F]"></div>
@@ -820,11 +820,11 @@ function Content({ optionClick, pageName }) {
 
   if (pageName == "اطلاعات شخصی") {
     return (
-      <div className="w-full h-[10px] mb-40 relative">
+      <div className="w-full h-[10px] mb-[24rem] lg:mb-40 relative">
         <div className="w-3/4 mx-auto ">
-          <div className="w-full flex flex-row gap-10 justify-around">
-            <div className="w-[70%]">
-              <div className="bg-white shadow-xl rounded-2xl p-16">
+          <div className="w-full flex flex-col-reverse lg:flex-row gap-10 justify-around">
+            <div className="lg:w-[70%] w-[100%]">
+              <div className="bg-white shadow-xl rounded-2xl p-2 lg:p-16">
                 {userInfo[userRole].map((user, index) => {
                   return (
                     <div
@@ -863,8 +863,8 @@ function Content({ optionClick, pageName }) {
                 </div>
               </div>
             </div>
-            <div className="w-[30%]">
-              <div className="bg-white h-[80vh] shadow-xl rounded-2xl relative">
+            <div className="lg:w-[30%] w-[100%]">
+              <div className="bg-white h-[55vh] shadow-xl rounded-2xl relative">
                 {/* user profile */}
                 <div className="h-[200px] w-full flex justify-center items-center">
                   <div className="rounded-full bg-gray-500 w-40 h-40 flex items-center justify-center">
