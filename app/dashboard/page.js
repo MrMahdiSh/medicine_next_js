@@ -265,11 +265,9 @@ function Content({ optionClick, pageName }) {
     history_count();
     if (localStorage.getItem("user_role") == "pharmacy") {
       getPres();
+      setInterval(getPres, 20000);
+      setInterval(getUserBehavior, 20000);
     }
-    const intervalId = setInterval(getPres, 20000);
-
-    // Cleanup the interval on component unmount
-    return () => clearInterval(intervalId);
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
@@ -572,7 +570,6 @@ function Content({ optionClick, pageName }) {
 
   async function pharmAccept(id) {
     optionClick("صفحه اصلی");
-
     try {
       await fetchData(
         "pharmacy/accept_prescription",
@@ -584,6 +581,7 @@ function Content({ optionClick, pageName }) {
         true
       );
       toast.success("عملیات با موفقیت انجام شد");
+      getUserBehavior();
       getPres();
     } catch (error) {}
   }
