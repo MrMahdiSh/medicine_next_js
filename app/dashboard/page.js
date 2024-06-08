@@ -325,7 +325,7 @@ function Content({ optionClick, pageName }) {
       "داروخانه های تایید شده",
       "عملگر",
     ],
-    pharmacy: ["دکتر", "نسخه", "تاریخ", "داروخانه های تایید شده", "عملگر"],
+    pharmacy: ["نسخه", "تاریخ", "وضعیت"],
   };
 
   const [rows, setRows] = useState([]);
@@ -467,7 +467,7 @@ function Content({ optionClick, pageName }) {
           ? "doctor/history"
           : temperoryUserRole == "user"
           ? "patient/patient_prescriptions"
-          : "",
+          : "pharmacy/history",
         "GET",
         null,
         localStorage.getItem("token")
@@ -503,6 +503,21 @@ function Content({ optionClick, pageName }) {
                 داروخانه ها
               </button>
             ),
+          };
+        });
+      }
+
+      if (temperoryUserRole == "pharmacy") {
+        var filteredData = userBehave["prescriptions"].map((behave) => {
+          return {
+            prescription: behave.prescription_string,
+            created_at: behave.created_at,
+            status:
+              behave.status == "pending"
+                ? "درانتظار"
+                : behave.status == "accepted"
+                ? "تایید کاربر"
+                : "نامشخص",
           };
         });
       }
