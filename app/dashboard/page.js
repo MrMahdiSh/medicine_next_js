@@ -777,14 +777,16 @@ function Content({ optionClick, pageName }) {
           ? "doctor/history"
           : temperoryUserRole == "user"
           ? "patient/patientHistory"
-          : "",
+          : "pharmacy/history",
         "GET",
         null,
         localStorage.getItem("token")
       );
       temperoryUserRole == "doctor"
         ? setTheCount(docy["doctor_history"])
-        : setTheCount(docy["user_history"]);
+        : temperoryUserRole == "user"
+        ? setTheCount(docy["user_history"])
+        : setTheCount(docy["pres_count"]);
     } catch (error) {}
   }
 
