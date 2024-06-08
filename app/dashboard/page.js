@@ -426,29 +426,39 @@ function Content({ optionClick, pageName }) {
     const filtered = thePharmacies.map((pharm) => {
       return {
         add: pharm.pharmacy_add,
-        action: (
-          <button
-            onClick={() => {
-              setModalIsOpen(false);
-              selectPharm(pharm.id);
-            }}
-            className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded"
-          >
-            تایید
-          </button>
-        ),
+        action:
+          pharm.main_status == "pending" ? (
+            <select
+              onChange={(e) => {
+                const selectedOption = e.target.value;
+                setModalIsOpen(false);
+                selectPharm(pharm.id, selectedOption);
+              }}
+              className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded"
+            >
+              <option value="" disabled selected>
+                نحوه دریافت
+              </option>
+              <option value="local">حضوری</option>
+              <option value="taxi">ارسال</option>
+            </select>
+          ) : pharm.status == "accepted" ? (
+            "انتخاب شما"
+          ) : (
+            ""
+          ),
       };
     });
 
     setPharmaciesList(filtered);
   }
 
-  async function selectPharm(id) {
+  async function selectPharm(id, option) {
     try {
       await fetchData(
         "patient/buy",
         "POST",
-        { accepted_prescription_id: id },
+        { accepted_prescription_id: id, type: option },
         localStorage.getItem("token"),
         true
       );
