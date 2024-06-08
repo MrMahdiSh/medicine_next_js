@@ -227,6 +227,8 @@ function Content({ optionClick, pageName }) {
 
   const [pharmaciesList, setPharmaciesList] = useState([]);
 
+  const [pharmacyPresList, setPharmacyPresList] = useState([]);
+
   // user behavior
   const prescirptionDetails = [
     {
@@ -261,6 +263,9 @@ function Content({ optionClick, pageName }) {
     getUserBehavior();
     setUserToken(localStorage.getItem("token"));
     history_count();
+    if (localStorage.getItem("user_role") == "pharmacy") {
+      getPres();
+    }
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
@@ -296,7 +301,7 @@ function Content({ optionClick, pageName }) {
         icon: FaClipboardList,
       },
       {
-        name: "ثبت نسخه",
+        name: "لیست نسخه ها",
         icon: FaClinicMedical,
       },
       {
@@ -506,6 +511,53 @@ function Content({ optionClick, pageName }) {
     } catch (e) {}
   }
 
+  async function getPres() {
+    try {
+      const pres = await fetchData(
+        "pharmacy/get_prescriptions",
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+      const filtered = pres["prescriptions"].map((thePres) => {
+        return {
+          prescription: thePres["prescription"],
+          action: (
+            <button
+              onClick={() => {
+                pharmAccept(thePres["id"]);
+              }}
+              className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded"
+            >
+              تایید
+            </button>
+          ),
+        };
+      });
+      setPharmacyPresList(filtered);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function pharmAccept(id) {
+    optionClick("صفحه اصلی");
+
+    try {
+      await fetchData(
+        "pharmacy/accept_prescription",
+        "POST",
+        {
+          prescription_id: id,
+        },
+        localStorage.getItem("token"),
+        true
+      );
+      toast.success("عملیات با موفقیت انجام شد");
+      getPres();
+    } catch (error) {}
+  }
+
   if (pageName == "ثبت نسخه") {
     if (prescriptionSubmited && !isLoading && prescriptionDone) {
       return (
@@ -634,8 +686,6 @@ function Content({ optionClick, pageName }) {
 
   const presDetailsCol = ["آدرس", "عملگر"];
 
-  // const rows = ["آدرس","عملگر"];
-
   if (pageName == "نسخه ها") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
@@ -668,6 +718,27 @@ function Content({ optionClick, pageName }) {
 
             {rows && userRole && (
               <Table columns={columns[userRole]} rows={rows} />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (pageName == "لیست نسخه ها") {
+    return (
+      <div className="w-full h-[10px] mb-[26rem] relative">
+        <div className="w-3/4 mx-auto ">
+          <div className="container mx-auto py-4">
+            <button
+              onClick={() => optionClick("صفحه اصلی")}
+              className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
+            >
+              بازگشت
+            </button>
+
+            {rows && userRole && (
+              <Table columns={["نسخه", "عملگر"]} rows={pharmacyPresList} />
             )}
           </div>
         </div>
