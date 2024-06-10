@@ -110,7 +110,9 @@ function Content({ optionClick, pageName }) {
     setRole(localStorage.getItem("user_role"));
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
     setUserToken(localStorage.getItem("token"));
-    FetchData(localStorage.getItem("token"));
+    fetchDoctors(localStorage.getItem("token"));
+    fetchPatients(localStorage.getItem("token"));
+    fetchPharmacy(localStorage.getItem("token"));
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
@@ -159,15 +161,14 @@ function Content({ optionClick, pageName }) {
     "لیست پزشکان": ["نام", "نام خانوادگی", "تخصص", "عملگر"],
   };
 
-  async function FetchData(token) {
-    // doctors
-    const getDoctors = await fetchData("Admin/doctors", "GET", null, token);
-    // pharmacy
-    const getPharmacy = await fetchData("Admin/pharmacy", "GET", null, token);
-    // doctors
-    const getPatient = await fetchData("Admin/patient", "GET", null, token);
-
-    var doctorFilter = getDoctors["data"].map((doctor) => {
+  async function fetchDoctors(token, page = 1) {
+    const getDoctors = await fetchData(
+      "Admin/doctors?page=" + page,
+      "GET",
+      null,
+      token
+    );
+    const doctorFilter = getDoctors["data"].map((doctor) => {
       return {
         name: doctor.user.name,
         last_name: doctor.user.last_name,
@@ -191,12 +192,22 @@ function Content({ optionClick, pageName }) {
       };
     });
 
-    setDoctors(doctorFilter);
-    setPharmacy(getPharmacy["data"]);
-    setPatients(getPatient["data"]);
+    setDoctors({
+      data: doctorFilter,
+      current_page: getDoctors["current_page"],
+      total: getDoctors["total"],
+    });
+  }
 
-    console.log(doctorFilter);
+  async function fetchPharmacy(token) {
+    const getPharmacy = await fetchData("Admin/pharmacy", "GET", null, token);
+    setPharmacy(getPharmacy["data"]);
     console.log(getPharmacy["data"]);
+  }
+
+  async function fetchPatients(token) {
+    const getPatient = await fetchData("Admin/patient", "GET", null, token);
+    setPatients(getPatient["data"]);
     console.log(getPatient["data"]);
   }
 
@@ -263,6 +274,7 @@ function Content({ optionClick, pageName }) {
 
             {rows && userRole && (
               <Table
+                paginated={true}
                 columns={columns[pageName]}
                 rows={
                   pageName == "لیست پزشکان"
