@@ -110,7 +110,7 @@ function Content({ optionClick, pageName }) {
     setRole(localStorage.getItem("user_role"));
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
     setUserToken(localStorage.getItem("token"));
-    fetchDoctors(localStorage.getItem("token"));
+    fetchDoctors();
     fetchPatients(localStorage.getItem("token"));
     fetchPharmacy(localStorage.getItem("token"));
   }, []);
@@ -148,6 +148,13 @@ function Content({ optionClick, pageName }) {
 
   const [transactions, setTransactions] = useState([]);
 
+  const [paginationInfo, setPaginationInfo] = useState({
+    "لیست پزشکان": 1,
+    "لیست داروخانه ها": 1,
+    "لیست کاربران": 1,
+    "لیست پرداختی ها": 1,
+  });
+
   const columns = {
     "لیست پرداختی ها": [
       "نام کاربر",
@@ -161,12 +168,12 @@ function Content({ optionClick, pageName }) {
     "لیست پزشکان": ["نام", "نام خانوادگی", "تخصص", "عملگر"],
   };
 
-  async function fetchDoctors(token, page = 1) {
+  async function fetchDoctors(page = 1) {
     const getDoctors = await fetchData(
       "Admin/doctors?page=" + page,
       "GET",
       null,
-      token
+      localStorage.getItem("token")
     );
     const doctorFilter = getDoctors["data"].map((doctor) => {
       return {
@@ -195,7 +202,7 @@ function Content({ optionClick, pageName }) {
     setDoctors({
       data: doctorFilter,
       current_page: getDoctors["current_page"],
-      total: getDoctors["total"],
+      total: getDoctors["last_page"],
     });
   }
 
@@ -268,24 +275,30 @@ function Content({ optionClick, pageName }) {
               بازگشت
             </button>
 
-            {
-              (doctors && console.log(doctors),
-              (
-                <Table
-                  paginated={true}
-                  columns={columns[pageName]}
-                  rows={
-                    pageName == "لیست پزشکان"
-                      ? doctors
-                      : pageName == "لسیت داروخانه ها"
-                      ? Pharmacy
-                      : pageName == "لیست کاربران"
-                      ? Patients
-                      : pageName == "لیست پرداختی ها" ?? transactions
+            {doctors && (
+              <Table
+                paginated={true}
+                columns={columns[pageName]}
+                changePage={(page) => {
+                  if (page == 1) {
+                    fetchDoctors(paginationInfo[pageName] + 1);
+                    paginationInfo[pageName] += 1;
+                  } else {
+                    fetchDoctors(paginationInfo[pageName] - 1);
+                    paginationInfo[pageName] -= 1;
                   }
-                />
-              ))
-            }
+                }}
+                rows={
+                  pageName == "لیست پزشکان"
+                    ? doctors
+                    : pageName == "لسیت داروخانه ها"
+                    ? Pharmacy
+                    : pageName == "لیست کاربران"
+                    ? Patients
+                    : pageName == "لیست پرداختی ها" ?? transactions
+                }
+              />
+            )}
           </div>
         </div>
       </div>

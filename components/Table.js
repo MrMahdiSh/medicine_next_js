@@ -4,16 +4,14 @@ import { formatDate } from "../utils/formatDate";
 const Table = ({ columns, rows, paginated = false, changePage }) => {
   const tableContainerRef = useRef(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [totalPages, setTotalPages] = useState(1);
-
   useEffect(() => {
     const container = tableContainerRef.current;
     if (container) {
       container.scrollLeft = container.scrollWidth;
     }
   }, []);
+
+  console.log(rows);
 
   return (
     <div
@@ -78,18 +76,22 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
           {paginated && rows["data"] && (
             <div className="flex justify-center mt-4">
               <button
-                onClick={changePage}
-                disabled={currentPage === 1}
+                onClick={() => {
+                  changePage(-1);
+                }}
+                disabled={rows["current_page"] === 1}
                 className="px-4 py-2 mx-1 border rounded"
               >
                 Previous
               </button>
               <span className="px-4 py-2 mx-1">
-                Page {currentPage} of {totalPages}
+                Page {rows["current_page"]} of {rows["total"]}
               </span>
               <button
-                onClick={changePage}
-                disabled={currentPage === totalPages}
+                onClick={() => {
+                  changePage(1);
+                }}
+                disabled={rows["total"] === rows["current_page"]}
                 className="px-4 py-2 mx-1 border rounded"
               >
                 Next
