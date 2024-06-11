@@ -202,13 +202,11 @@ function Content({ optionClick, pageName }) {
   async function fetchPharmacy(token) {
     const getPharmacy = await fetchData("Admin/pharmacy", "GET", null, token);
     setPharmacy(getPharmacy["data"]);
-    console.log(getPharmacy["data"]);
   }
 
   async function fetchPatients(token) {
     const getPatient = await fetchData("Admin/patient", "GET", null, token);
     setPatients(getPatient["data"]);
-    console.log(getPatient["data"]);
   }
 
   function doctorProfileClick(id) {
@@ -270,23 +268,24 @@ function Content({ optionClick, pageName }) {
               بازگشت
             </button>
 
-            {console.log(pageName)}
-
-            {rows && userRole && (
-              <Table
-                paginated={true}
-                columns={columns[pageName]}
-                rows={
-                  pageName == "لیست پزشکان"
-                    ? doctors
-                    : pageName == "لسیت داروخانه ها"
-                    ? Pharmacy
-                    : pageName == "لیست کاربران"
-                    ? Patients
-                    : pageName == "لیست پرداختی ها" ?? transactions
-                }
-              />
-            )}
+            {
+              (doctors && console.log(doctors),
+              (
+                <Table
+                  paginated={true}
+                  columns={columns[pageName]}
+                  rows={
+                    pageName == "لیست پزشکان"
+                      ? doctors
+                      : pageName == "لسیت داروخانه ها"
+                      ? Pharmacy
+                      : pageName == "لیست کاربران"
+                      ? Patients
+                      : pageName == "لیست پرداختی ها" ?? transactions
+                  }
+                />
+              ))
+            }
           </div>
         </div>
       </div>
