@@ -106,6 +106,8 @@ function Content({ optionClick, pageName }) {
 
   const [modalTitle, setModalTitle] = useState("");
 
+  const [isModalPaginated, setIsModalPaginate] = useState(true);
+
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
@@ -150,6 +152,7 @@ function Content({ optionClick, pageName }) {
 
   const [paginationInfo, setPaginationInfo] = useState({
     "لیست پزشکان": 1,
+    "گزارشات پزشکان": 1,
     "لیست داروخانه ها": 1,
     "لیست کاربران": 1,
     "لیست پرداختی ها": 1,
@@ -168,6 +171,8 @@ function Content({ optionClick, pageName }) {
     "لیست پزشکان": ["نام", "نام خانوادگی", "تخصص", "عملگر"],
   };
 
+  const [modalRows, setModalRows] = useState([]);
+
   async function fetchDoctors(page = 1) {
     const getDoctors = await fetchData(
       "Admin/doctors?page=" + page,
@@ -183,13 +188,17 @@ function Content({ optionClick, pageName }) {
         action: (
           <div>
             <button
-              onClick={doctorProfileClick}
+              onClick={() => {
+                doctorProfileClick(doctor.user_id);
+              }}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
               پروفایل
             </button>
             <button
-              onClick={doctorHistoryClick}
+              onClick={() => {
+                doctorHistoryClick(doctor.user_id);
+              }}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-5"
             >
               گزارشات
@@ -216,14 +225,41 @@ function Content({ optionClick, pageName }) {
     setPatients(getPatient["data"]);
   }
 
-  function doctorProfileClick(id) {
+  async function doctorProfileClick(id) {
     setModalIsOpen(true);
     setModalTitle("پروفایل دکتر");
+    const docy = await fetchData(
+      "Admin/doctor_prescriptions",
+      "GET",
+      null,
+      localStorage.getItem("token")
+    );
+    setModalRows(docy);
   }
 
-  function doctorHistoryClick(id) {
+  async function doctorHistoryClick(id, page = 1) {
     setModalIsOpen(true);
     setModalTitle("گزارشات دکتر");
+    try {
+      const docy = await fetchData(
+        "Admin/doctor_prescriptions?doctor_id=" + id,
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+      const doctorFilter = docy["data"].map((doctor) => {
+        return {
+          name: doctor.prescription,
+          reason_for_referral: doctor.reason_for_referral,
+        };
+      });
+      setIsModalPaginate(true);
+      setModalRows({
+        data: doctorFilter,
+        current_page: docy["current_page"],
+        total: docy["last_page"],
+      });
+    } catch (error) {}
   }
 
   const modalColumns = {
@@ -235,14 +271,7 @@ function Content({ optionClick, pageName }) {
       "شماره",
       "تاریخ عضویت",
     ],
-    "گزارشات دکتر": [
-      "نام",
-      "نام خانوادگی",
-      "کدملی",
-      "اینستاگرام",
-      "شماره",
-      "تاریخ عضویت",
-    ],
+    "گزارشات دکتر": ["نسخه", "دلیل مراجعه"],
   };
 
   if (pageName != "صفحه اصلی") {
@@ -256,7 +285,12 @@ function Content({ optionClick, pageName }) {
         >
           <div className="bg-white w-[85%] p-10 rounded-lg shadow-lg">
             <h1 className="text-right mb-5">{modalTitle}</h1>
-            {/* <Table columns={presDetailsCol} rows={pharmaciesList} /> */}
+
+            <Table
+              paginated={isModalPaginated}
+              columns={modalColumns[modalTitle]}
+              rows={modalRows}
+            />
             <button
               className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
               onClick={() => setModalIsOpen(false)}

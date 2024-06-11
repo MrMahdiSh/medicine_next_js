@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { formatDate } from "../utils/formatDate";
 
@@ -10,8 +12,7 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
       container.scrollLeft = container.scrollWidth;
     }
   }, []);
-
-  console.log(rows);
+  ``;
 
   return (
     <div
@@ -77,24 +78,29 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
             <div className="flex justify-center mt-4">
               <button
                 onClick={() => {
-                  changePage(-1);
-                }}
-                disabled={rows["current_page"] === 1}
-                className="px-4 py-2 mx-1 border rounded"
-              >
-                Previous
-              </button>
-              <span className="px-4 py-2 mx-1">
-                Page {rows["current_page"]} of {rows["total"]}
-              </span>
-              <button
-                onClick={() => {
                   changePage(1);
                 }}
                 disabled={rows["total"] === rows["current_page"]}
-                className="px-4 py-2 mx-1 border rounded"
+                className={`px-4 py-2 mx-1 border rounded ${
+                  rows["total"] != rows["current_page"] ?? "bg-blue-400"
+                }`}
               >
-                Next
+                بعدی
+              </button>
+
+              <span className="px-4 py-2 mx-1">
+                صفحه {rows["current_page"]} از {rows["total"]}
+              </span>
+              <button
+                onClick={() => {
+                  changePage(-1);
+                }}
+                disabled={rows["current_page"] === 1}
+                className={`px-4 py-2 mx-1 border rounded ${
+                  rows["current_page"] === 1 ?? "bg-blue-400"
+                }`}
+              >
+                قبلی
               </button>
             </div>
           )}
