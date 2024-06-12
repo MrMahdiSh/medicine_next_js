@@ -82,7 +82,7 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
                 }}
                 disabled={rows["total"] === rows["current_page"]}
                 className={`px-4 py-2 mx-1 border rounded ${
-                  rows["total"] != rows["current_page"] ?? "bg-blue-400"
+                  rows["total"] !== rows["current_page"] ? "bg-blue-400" : ""
                 }`}
               >
                 بعدی
@@ -97,7 +97,7 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
                 }}
                 disabled={rows["current_page"] === 1}
                 className={`px-4 py-2 mx-1 border rounded ${
-                  rows["current_page"] === 1 ?? "bg-blue-400"
+                  rows["current_page"] === 1 ? "" : "bg-blue-400"
                 }`}
               >
                 قبلی

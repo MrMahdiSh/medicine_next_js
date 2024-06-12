@@ -108,6 +108,10 @@ function Content({ optionClick, pageName }) {
 
   const [isModalPaginated, setIsModalPaginate] = useState(true);
 
+  const [latestID, setLatestID] = useState(undefined);
+
+  const [allDoctors, setAllDoctors] = useState([]);
+
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
@@ -152,7 +156,7 @@ function Content({ optionClick, pageName }) {
 
   const [paginationInfo, setPaginationInfo] = useState({
     "لیست پزشکان": 1,
-    "گزارشات پزشکان": 1,
+    "گزارشات دکتر": 1,
     "لیست داروخانه ها": 1,
     "لیست کاربران": 1,
     "لیست پرداختی ها": 1,
@@ -180,6 +184,9 @@ function Content({ optionClick, pageName }) {
       null,
       localStorage.getItem("token")
     );
+
+    setAllDoctors(getDoctors["data"]);
+
     const doctorFilter = getDoctors["data"].map((doctor) => {
       return {
         name: doctor.user.name,
@@ -228,21 +235,36 @@ function Content({ optionClick, pageName }) {
   async function doctorProfileClick(id) {
     setModalIsOpen(true);
     setModalTitle("پروفایل دکتر");
-    const docy = await fetchData(
-      "Admin/doctor_prescriptions",
-      "GET",
-      null,
-      localStorage.getItem("token")
-    );
-    setModalRows(docy);
+    try {
+      const docy = await fetchData(
+        "Admin/get_doctor?doctor_id=" + id,
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+
+      setIsModalPaginate(false);
+
+      const docyFilter = {
+        name: docy.user.name,
+        last_name: docy.user.last_name,
+        meli_code: docy.user.meli_code,
+        instagram: docy.instagram,
+        phone: docy.user.phone,
+        created_at: docy.created_at,
+      };
+
+      setModalRows([docyFilter]);
+    } catch (error) {}
   }
 
   async function doctorHistoryClick(id, page = 1) {
     setModalIsOpen(true);
+    setLatestID(id);
     setModalTitle("گزارشات دکتر");
     try {
       const docy = await fetchData(
-        "Admin/doctor_prescriptions?doctor_id=" + id,
+        "Admin/doctor_prescriptions?doctor_id=" + id + "&page=" + page,
         "GET",
         null,
         localStorage.getItem("token")
@@ -283,13 +305,18 @@ function Content({ optionClick, pageName }) {
           className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75"
           overlayClassName="fixed inset-0"
         >
-          <div className="bg-white w-[85%] p-10 rounded-lg shadow-lg">
+          <div className="bg-white w-[85%] max-h-[80%] p-10 rounded-lg shadow-lg overflow-y-auto">
             <h1 className="text-right mb-5">{modalTitle}</h1>
 
+            {console.log(modalRows)}
             <Table
               paginated={isModalPaginated}
               columns={modalColumns[modalTitle]}
               rows={modalRows}
+              changePage={(e) => {
+                paginationInfo[modalTitle] += e;
+                doctorHistoryClick(latestID, paginationInfo[modalTitle]);
+              }}
             />
             <button
               className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
@@ -299,7 +326,6 @@ function Content({ optionClick, pageName }) {
             </button>
           </div>
         </Modal>
-
         <div className="w-3/4 mx-auto ">
           <div className="container mx-auto py-4">
             <button
