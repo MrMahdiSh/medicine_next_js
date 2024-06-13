@@ -211,7 +211,7 @@ function Content({ optionClick, pageName }) {
           <div>
             <button
               onClick={() => {
-                doctorProfileClick(doctor.user_id);
+                doctorProfileClick(doctor.id);
               }}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
