@@ -174,6 +174,7 @@ function Content({ optionClick, pageName }) {
     "لیست کاربران": 1,
     "لیست پرداختی ها": 1,
     "پروفایل داروخانه": 1,
+    "گزارشات داروخانه": 1,
   });
 
   const columns = {
@@ -269,6 +270,7 @@ function Content({ optionClick, pageName }) {
     setModalIsOpen(true);
     setLatestID(id);
     setModalTitle("گزارشات داروخانه");
+    setIsModalPaginate(true);
     try {
       const docy = await fetchData(
         "Admin/pharmacy_prescriptions?pharmacy_user_id=" + id + "&page=" + page,
@@ -673,7 +675,17 @@ function Content({ optionClick, pageName }) {
               rows={modalRows}
               changePage={(e) => {
                 paginationInfo[modalTitle] += e;
-                doctorHistoryClick(latestID, paginationInfo[modalTitle]);
+                if (modalTitle == "گزارشات دکتر") {
+                  doctorHistoryClick(latestID, paginationInfo[modalTitle]);
+                }
+
+                if (modalTitle == "گزارشات داروخانه") {
+                  pharmacyHistoryClick(latestID, paginationInfo[modalTitle]);
+                }
+
+                // if (modalTitle == "گزارشات داروخانه") {
+                //   pharmacyHistoryClick(latestID, paginationInfo[modalTitle]);
+                // }
               }}
             />
             <button
@@ -709,10 +721,20 @@ function Content({ optionClick, pageName }) {
                 columns={columns[pageName]}
                 changePage={(page) => {
                   if (page == 1) {
-                    fetchDoctors(paginationInfo[pageName] + 1);
+                    if (pageName == "لیست پزشکان") {
+                      fetchDoctors(paginationInfo[pageName] + 1);
+                    }
+                    if (pageName == "لیست داروخانه ها") {
+                      fetchPharmacy(paginationInfo[pageName] + 1);
+                    }
                     paginationInfo[pageName] += 1;
                   } else {
-                    fetchDoctors(paginationInfo[pageName] - 1);
+                    if (pageName == "لیست پزشکان") {
+                      fetchDoctors(paginationInfo[pageName] - 1);
+                    }
+                    if (pageName == "لیست داروخانه ها") {
+                      fetchPharmacy(paginationInfo[pageName] - 1);
+                    }
                     paginationInfo[pageName] -= 1;
                   }
                 }}
