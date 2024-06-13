@@ -104,6 +104,10 @@ function Content({ optionClick, pageName }) {
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
+  const [NewmodalIsOpen, setNewModalIsOpen] = useState(false);
+
+  const [NewmodalTitle, setNewModalTitle] = useState(false);
+
   const [modalTitle, setModalTitle] = useState("");
 
   const [isModalPaginated, setIsModalPaginate] = useState(true);
@@ -111,6 +115,15 @@ function Content({ optionClick, pageName }) {
   const [latestID, setLatestID] = useState(undefined);
 
   const [allDoctors, setAllDoctors] = useState([]);
+
+  const [userDetails, setUserDetails] = useState([]);
+
+  const handleUserInfoUpdate = (e, enName) => {
+    setUserDetails({
+      ...userDetails,
+      [enName]: e.target.value,
+    });
+  };
 
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
@@ -296,9 +309,230 @@ function Content({ optionClick, pageName }) {
     "گزارشات دکتر": ["نسخه", "دلیل مراجعه"],
   };
 
+  const userInfo = {
+    user: [
+      {
+        name: "نام",
+        type: "text",
+        editable: true,
+        enName: "name",
+      },
+      {
+        name: "نام خانوادگی",
+        type: "text",
+        editable: true,
+        enName: "last_name",
+      },
+      {
+        name: "کدملی",
+        type: "number",
+        editable: true,
+        enName: "meli_code",
+      },
+      {
+        name: "شماره",
+        type: "number",
+        editable: false,
+        enName: "phone",
+      },
+    ],
+    doctor: [
+      {
+        name: "نام",
+        type: "text",
+        editable: true,
+        enName: "name",
+      },
+      {
+        name: "نام خانوادگی",
+        type: "text",
+        editable: true,
+        enName: "last_name",
+      },
+      {
+        name: "کدملی",
+        type: "number",
+        editable: true,
+        enName: "meli_code",
+      },
+      {
+        name: "نوع تخصص",
+        type: "text",
+        editable: true,
+        enName: "expertise",
+      },
+      {
+        name: "آدرس اینستاگرام",
+        type: "text",
+        editable: true,
+        enName: "instagram",
+      },
+      {
+        name: "شماره تماس",
+        type: "number",
+        editable: false,
+        enName: "phone",
+      },
+    ],
+    pharmacy: [
+      {
+        name: "نام",
+        type: "text",
+        editable: true,
+        enName: "name",
+      },
+      {
+        name: "نام خانوادگی",
+        type: "text",
+        editable: true,
+        enName: "last_name",
+      },
+      {
+        name: "آدرس اینستاگرام",
+        type: "text",
+        editable: true,
+        enName: "instagram",
+      },
+      {
+        name: "آدرس",
+        type: "text",
+        editable: true,
+        enName: "address",
+      },
+      {
+        name: "کد مسئول فنی",
+        type: "text",
+        editable: true,
+        enName: "technical_assistant_code",
+      },
+      {
+        name: "جواز مطب",
+        type: "text",
+        editable: true,
+        enName: "Office_license",
+      },
+      {
+        name: "شماره تماس",
+        type: "number",
+        editable: false,
+        enName: "phone",
+      },
+    ],
+  };
+
+  function createNewFunc(name) {
+    setNewModalIsOpen(true);
+    switch (name) {
+      case "لیست پزشکان":
+        setNewModalTitle("پزشک جدید");
+        break;
+      case "لیست داروخانه ها":
+        setNewModalTitle("داروخانه جدید");
+
+        break;
+      case "لیست کاربران":
+        setNewModalTitle("کاربر جدید");
+
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  function getUserRoleByNewUserPageName(newUserPageName) {
+    switch (newUserPageName) {
+      case "پزشک جدید":
+        return "doctor";
+
+      case "داروخانه جدید":
+        return "pharmacy";
+
+      case "کاربر جدید":
+        return "user";
+
+      default:
+        break;
+    }
+  }
+
+  async function submitNewUser() {
+    try {
+      const role = getUserRoleByNewUserPageName(NewmodalTitle);
+
+      console.log(role);
+
+      userDetails["role"] = role;
+
+      userDetails["status"] = "active";
+
+      await fetchData(
+        "Admin/users",
+        "POST",
+        userDetails,
+        localStorage.getItem("token"),
+        true
+      );
+      toast.success("با موفقیت انجام شد");
+      setModalIsOpen(false);
+      setNewModalIsOpen(false);
+    } catch (e) {
+      toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
+    }
+  }
+
   if (pageName != "صفحه اصلی") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
+        <Modal
+          isOpen={NewmodalIsOpen}
+          onRequestClose={() => setNewModalIsOpen(false)}
+          className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75"
+          overlayClassName="fixed inset-0"
+        >
+          <div className="bg-white w-[85%] max-h-[80%] p-10 rounded-lg shadow-lg overflow-y-auto">
+            <h1 className="text-right mb-5">{NewmodalTitle}</h1>
+
+            {/* new modal data */}
+            {NewmodalIsOpen &&
+              userInfo[getUserRoleByNewUserPageName(NewmodalTitle)].map(
+                (user, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="w-full flex flex-col gap-5 mt-5"
+                    >
+                      <h1 className="text-right">:{user.name}</h1>
+                      <MainInput
+                        theOnChange={(e) => {
+                          handleUserInfoUpdate(e, user.enName);
+                        }}
+                        editable={true}
+                        placeholder={user.name}
+                        type={user.type}
+                      />
+                    </div>
+                  );
+                }
+              )}
+
+            <div className="w-full flex flex-col items-end">
+              <button
+                className="mt-4 bg-green-500 hover:bg-green-600 w-[200px] text-white py-2 px-4 rounded"
+                onClick={submitNewUser}
+              >
+                ثبت
+              </button>
+            </div>
+
+            <button
+              className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+              onClick={() => setNewModalIsOpen(false)}
+            >
+              خروج
+            </button>
+          </div>
+        </Modal>
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
@@ -328,13 +562,24 @@ function Content({ optionClick, pageName }) {
         </Modal>
         <div className="w-3/4 mx-auto ">
           <div className="container mx-auto py-4">
-            <button
-              onClick={() => optionClick("صفحه اصلی")}
-              className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
-            >
-              بازگشت
-            </button>
+            <div className="flex gap-5">
+              <button
+                onClick={() => optionClick("صفحه اصلی")}
+                className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
+              >
+                بازگشت
+              </button>
 
+              {console.log(pageName)}
+              {pageName != "لیست پرداختی ها" && (
+                <button
+                  onClick={() => createNewFunc(pageName)}
+                  className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-500 mb-10"
+                >
+                  جدید
+                </button>
+              )}
+            </div>
             {doctors && (
               <Table
                 paginated={true}
