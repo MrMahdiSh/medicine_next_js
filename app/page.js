@@ -77,6 +77,10 @@ function Content() {
     router.push("/dashboard");
   }
 
+  function adminLogingSuccess() {
+    router.push("/admin");
+  }
+
   async function handleValidCode(code) {
     if (code.length === 4) {
       setIsLoading(true);
@@ -87,6 +91,10 @@ function Content() {
         });
         console.log(data);
         setIsLoading(false);
+        if (data.role[0] == "admin") {
+          adminLogingSuccess();
+          return;
+        }
         if (data["user_details"]["meli_code"]) {
           HandleLoginSuccess();
         } else {
