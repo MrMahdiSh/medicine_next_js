@@ -114,7 +114,7 @@ function Content({ optionClick, pageName }) {
 
   const [latestID, setLatestID] = useState(undefined);
 
-  const [allDoctors, setAllDoctors] = useState([]);
+  const [allDoctors, setAllPatient] = useState([]);
 
   const [userDetails, setUserDetails] = useState([]);
 
@@ -130,7 +130,7 @@ function Content({ optionClick, pageName }) {
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
     setUserToken(localStorage.getItem("token"));
     fetchDoctors();
-    fetchPatients(localStorage.getItem("token"));
+    fetchPatients();
     fetchPharmacy();
   }, []);
 
@@ -175,6 +175,7 @@ function Content({ optionClick, pageName }) {
     "لیست پرداختی ها": 1,
     "پروفایل داروخانه": 1,
     "گزارشات داروخانه": 1,
+    "گزارشات کاربر": 1,
   });
 
   const columns = {
@@ -184,6 +185,7 @@ function Content({ optionClick, pageName }) {
       "مقدار",
       "نام داروخانه",
       "نام پزشک",
+      "تاریخ",
     ],
     "لیست کاربران": ["نام", "نام خانوادگی", "عملگر"],
     "لیست داروخانه ها": ["نام داروخانه", "آدرس", "عملگر"],
@@ -200,7 +202,7 @@ function Content({ optionClick, pageName }) {
       localStorage.getItem("token")
     );
 
-    setAllDoctors(getDoctors["data"]);
+    setAllPatient(getDoctors["data"]);
 
     const doctorFilter = getDoctors["data"].map((doctor) => {
       return {
@@ -351,9 +353,108 @@ function Content({ optionClick, pageName }) {
     });
   }
 
-  async function fetchPatients(token) {
-    const getPatient = await fetchData("Admin/patient", "GET", null, token);
-    setPatients(getPatient["data"]);
+  async function userProfileClick(id) {
+    setModalIsOpen(true);
+    setModalTitle("پروفایل کاربر");
+    try {
+      const docy = await fetchData(
+        "Admin/get_patient?patient_id=" + id,
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+
+      setIsModalPaginate(false);
+
+      const patientFilter = {
+        name: docy.user.name,
+        last_name: docy.user.last_name,
+        phone: docy.user.phone,
+        meli_code: docy.user.meli_code,
+        created_at: docy.created_at,
+      };
+
+      setModalRows([patientFilter]);
+    } catch (error) {}
+  }
+
+  async function userHistoryClick(id, page = 1) {
+    setModalIsOpen(true);
+    setLatestID(id);
+    setModalTitle("گزارشات کاربر");
+    try {
+      const docy = await fetchData(
+        "Admin/patient_prescriptions?patient_id=" + id + "&page=" + page,
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+      const patientPresListFilter = docy["data"].map((patientPres) => {
+        return {
+          doctor_name:
+            patientPres.doctor_details.name +
+            " " +
+            patientPres.doctor_details.last_name,
+          prescription: patientPres.prescription,
+          reason_for_referral: patientPres.reason_for_referral,
+          status:
+            patientPres.status === "pending"
+              ? "در انتظار"
+              : patientPres.status === "accepted"
+              ? "تایید شده"
+              : patientPres.status,
+          created_at: patientPres.created_at,
+        };
+      });
+      setIsModalPaginate(true);
+      setModalRows({
+        data: patientPresListFilter,
+        current_page: docy["current_page"],
+        total: docy["last_page"],
+      });
+    } catch (error) {}
+  }
+
+  async function fetchPatients(page = 1) {
+    const getPatient = await fetchData(
+      "Admin/patient?page=" + page,
+      "GET",
+      null,
+      localStorage.getItem("token")
+    );
+
+    const patientFilters = getPatient["data"].map((theUser) => {
+      return {
+        name: theUser.user.name,
+        last_name: theUser.user.last_name,
+        action: (
+          <div>
+            <button
+              onClick={() => {
+                userProfileClick(theUser.user_id);
+              }}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              پروفایل
+            </button>
+            <button
+              onClick={() => {
+                userHistoryClick(theUser.user_id);
+              }}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-5"
+            >
+              گزارشات
+            </button>
+          </div>
+        ),
+      };
+    });
+
+    setPatients({
+      data: patientFilters,
+      current_page: getPatient["current_page"],
+      total: getPatient["last_page"],
+    });
   }
 
   async function doctorProfileClick(id) {
@@ -436,6 +537,8 @@ function Content({ optionClick, pageName }) {
       "وضعیت",
       "تاریخ",
     ],
+    "پروفایل کاربر": ["نام", "نام خانوادگی", "شماره", "کدملی", "تاریخ عضویت"],
+    "گزارشات کاربر": ["نام دکتر", "نسخه", "دلیل مراجعه", "وضعیت", "تاریخ"],
   };
 
   const userInfo = {
@@ -654,7 +757,10 @@ function Content({ optionClick, pageName }) {
 
             <button
               className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-              onClick={() => setNewModalIsOpen(false)}
+              onClick={() => {
+                setNewModalIsOpen(false);
+                setModalRows([]);
+              }}
             >
               خروج
             </button>
@@ -683,14 +789,17 @@ function Content({ optionClick, pageName }) {
                   pharmacyHistoryClick(latestID, paginationInfo[modalTitle]);
                 }
 
-                // if (modalTitle == "گزارشات داروخانه") {
-                //   pharmacyHistoryClick(latestID, paginationInfo[modalTitle]);
-                // }
+                if (modalTitle == "گزارشات کاربر") {
+                  userHistoryClick(latestID, paginationInfo[modalTitle]);
+                }
               }}
             />
             <button
               className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-              onClick={() => setModalIsOpen(false)}
+              onClick={() => {
+                setModalIsOpen(false);
+                setModalRows([]);
+              }}
             >
               خروج
             </button>
