@@ -173,6 +173,7 @@ function Content({ optionClick, pageName }) {
     "لیست داروخانه ها": 1,
     "لیست کاربران": 1,
     "لیست پرداختی ها": 1,
+    "پروفایل داروخانه": 1,
   });
 
   const columns = {
@@ -263,7 +264,48 @@ function Content({ optionClick, pageName }) {
     } catch (error) {}
   }
 
-  async function pharmacyHistoryClick(id) {}
+  async function pharmacyHistoryClick(id, page = 1) {
+    console.log(id);
+    setModalIsOpen(true);
+    setLatestID(id);
+    setModalTitle("گزارشات داروخانه");
+    try {
+      const docy = await fetchData(
+        "Admin/pharmacy_prescriptions?pharmacy_user_id=" + id + "&page=" + page,
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+      const filter = docy["data"].map((theFIlter) => {
+        console.log(theFIlter.prescription.doctor_details);
+        return {
+          patient_name:
+            theFIlter.prescription.user.name +
+            " " +
+            theFIlter.prescription.user.last_name,
+          doctor_name:
+            theFIlter.prescription.doctor_details.name +
+            " " +
+            theFIlter.prescription.doctor_details.last_name,
+          prescription: theFIlter.prescription.prescription,
+          reason_for_referral: theFIlter.prescription.reason_for_referral,
+          status:
+            theFIlter.status === "pending"
+              ? "در انتظار"
+              : theFIlter.status === "accepted"
+              ? "تایید شده"
+              : theFIlter.status,
+          created_at: theFIlter.created_at,
+        };
+      });
+      setIsModalPaginate(true);
+      setModalRows({
+        data: filter,
+        current_page: docy["current_page"],
+        total: docy["last_page"],
+      });
+    } catch (error) {}
+  }
 
   async function fetchPharmacy(page = 1) {
     const getPharmacy = await fetchData(
@@ -289,7 +331,7 @@ function Content({ optionClick, pageName }) {
             </button>
             <button
               onClick={() => {
-                pharmacyHistoryClick(pharm.id);
+                pharmacyHistoryClick(pharm.id, paginationInfo[modalTitle]);
               }}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-5"
             >
@@ -383,6 +425,14 @@ function Content({ optionClick, pageName }) {
       "شماره",
       "شماره جواز",
       "تاریخ عضویت",
+    ],
+    "گزارشات داروخانه": [
+      "نام بیمار",
+      "نام دکتر",
+      "نسخه",
+      "دلیل مراجعه",
+      "وضعیت",
+      "تاریخ",
     ],
   };
 
@@ -536,7 +586,6 @@ function Content({ optionClick, pageName }) {
   async function submitNewUser() {
     try {
       const role = getUserRoleByNewUserPageName(NewmodalTitle);
-
 
       userDetails["role"] = role;
 
