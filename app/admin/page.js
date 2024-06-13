@@ -131,7 +131,7 @@ function Content({ optionClick, pageName }) {
     setUserToken(localStorage.getItem("token"));
     fetchDoctors();
     fetchPatients(localStorage.getItem("token"));
-    fetchPharmacy(localStorage.getItem("token"));
+    fetchPharmacy();
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);
@@ -184,7 +184,7 @@ function Content({ optionClick, pageName }) {
       "نام پزشک",
     ],
     "لیست کاربران": ["نام", "نام خانوادگی", "عملگر"],
-    "لیست داروخانه ها": ["نام داروخانه", "عملگر"],
+    "لیست داروخانه ها": ["نام داروخانه", "آدرس", "عملگر"],
     "لیست پزشکان": ["نام", "نام خانوادگی", "تخصص", "عملگر"],
   };
 
@@ -235,9 +235,76 @@ function Content({ optionClick, pageName }) {
     });
   }
 
-  async function fetchPharmacy(token) {
-    const getPharmacy = await fetchData("Admin/pharmacy", "GET", null, token);
-    setPharmacy(getPharmacy["data"]);
+  async function pharmacyProfileClick(id) {
+    setModalIsOpen(true);
+    setModalTitle("پروفایل داروخانه");
+    try {
+      const docy = await fetchData(
+        "Admin/get_pharmacy?pharmacy_id=" + id,
+        "GET",
+        null,
+        localStorage.getItem("token")
+      );
+
+      setIsModalPaginate(false);
+
+      const docyFilter = {
+        name: docy.name,
+        docName: docy.user.name,
+        docLastName: docy.user.last_name,
+        meli_code: docy.user.meli_code,
+        technical_assistant_code: docy.technical_assistant_code,
+        phone: docy.user.phone,
+        Office_license: docy.Office_license,
+        created_at: docy.created_at,
+      };
+
+      setModalRows([docyFilter]);
+    } catch (error) {}
+  }
+
+  async function pharmacyHistoryClick(id) {}
+
+  async function fetchPharmacy(page = 1) {
+    const getPharmacy = await fetchData(
+      "Admin/pharmacy?page=" + page,
+      "GET",
+      null,
+      localStorage.getItem("token")
+    );
+
+    const filter = getPharmacy["data"].map((pharm) => {
+      return {
+        name: pharm["name"],
+        address: pharm["address"],
+        action: (
+          <div>
+            <button
+              onClick={() => {
+                pharmacyProfileClick(pharm.id);
+              }}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              پروفایل
+            </button>
+            <button
+              onClick={() => {
+                pharmacyHistoryClick(pharm.id);
+              }}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-5"
+            >
+              گزارشات
+            </button>
+          </div>
+        ),
+      };
+    });
+
+    setPharmacy({
+      data: filter,
+      current_page: getPharmacy["current_page"],
+      total: getPharmacy["last_page"],
+    });
   }
 
   async function fetchPatients(token) {
@@ -307,6 +374,16 @@ function Content({ optionClick, pageName }) {
       "تاریخ عضویت",
     ],
     "گزارشات دکتر": ["نسخه", "دلیل مراجعه"],
+    "پروفایل داروخانه": [
+      "نام داروخانه",
+      "نام پزشک داروساز",
+      "نام خانوادگی پزشک داروساز",
+      "کدملی پزشک داروساز",
+      "کد مسئول فنی",
+      "شماره",
+      "شماره جواز",
+      "تاریخ عضویت",
+    ],
   };
 
   const userInfo = {
@@ -460,7 +537,6 @@ function Content({ optionClick, pageName }) {
     try {
       const role = getUserRoleByNewUserPageName(NewmodalTitle);
 
-      console.log(role);
 
       userDetails["role"] = role;
 
@@ -542,7 +618,6 @@ function Content({ optionClick, pageName }) {
           <div className="bg-white w-[85%] max-h-[80%] p-10 rounded-lg shadow-lg overflow-y-auto">
             <h1 className="text-right mb-5">{modalTitle}</h1>
 
-            {console.log(modalRows)}
             <Table
               paginated={isModalPaginated}
               columns={modalColumns[modalTitle]}
@@ -570,7 +645,6 @@ function Content({ optionClick, pageName }) {
                 بازگشت
               </button>
 
-              {console.log(pageName)}
               {pageName != "لیست پرداختی ها" && (
                 <button
                   onClick={() => createNewFunc(pageName)}
@@ -580,7 +654,7 @@ function Content({ optionClick, pageName }) {
                 </button>
               )}
             </div>
-            {doctors && (
+            {
               <Table
                 paginated={true}
                 columns={columns[pageName]}
@@ -596,14 +670,14 @@ function Content({ optionClick, pageName }) {
                 rows={
                   pageName == "لیست پزشکان"
                     ? doctors
-                    : pageName == "لسیت داروخانه ها"
+                    : pageName == "لیست داروخانه ها"
                     ? Pharmacy
                     : pageName == "لیست کاربران"
                     ? Patients
                     : pageName == "لیست پرداختی ها" ?? transactions
                 }
               />
-            )}
+            }
           </div>
         </div>
       </div>
