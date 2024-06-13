@@ -229,6 +229,14 @@ function Content({ optionClick, pageName }) {
 
   const [pharmacyPresList, setPharmacyPresList] = useState([]);
 
+  const [buyDetails, setBuyDetails] = useState({
+    id: undefined,
+    address: undefined,
+    price: undefined,
+    type: undefined,
+    prescription: undefined,
+  });
+
   // user behavior
   const prescirptionDetails = [
     {
@@ -413,6 +421,15 @@ function Content({ optionClick, pageName }) {
     setPredcriptionDone(false);
   }
 
+  async function buyIt(address, price, type, prescription, id) {
+    optionClick("خرید");
+    buyDetails["address"] = address;
+    buyDetails["price"] = price;
+    buyDetails["type"] = type;
+    buyDetails["prescription"] = prescription;
+    buyDetails["id"] = id;
+  }
+
   async function fetchPharmacies(id) {
     setPharmaciesList([]);
 
@@ -428,13 +445,20 @@ function Content({ optionClick, pageName }) {
     const filtered = thePharmacies.map((pharm) => {
       return {
         add: pharm.pharmacy_add,
+        price: pharm.price,
         action:
           pharm.main_status == "pending" ? (
             <select
               onChange={(e) => {
                 const selectedOption = e.target.value;
                 setModalIsOpen(false);
-                selectPharm(pharm.id, selectedOption);
+                buyIt(
+                  pharm.pharmacy_add,
+                  pharm.price,
+                  selectedOption,
+                  pharm.prescription.prescription,
+                  pharm.id
+                );
               }}
               className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded"
             >
@@ -456,6 +480,7 @@ function Content({ optionClick, pageName }) {
   }
 
   async function selectPharm(id, option) {
+    optionClick("صفحه اصلی");
     try {
       await fetchData(
         "patient/buy",
@@ -691,6 +716,48 @@ function Content({ optionClick, pageName }) {
     );
   }
 
+  if (pageName == "خرید") {
+    return (
+      <div className="w-full h-[10px] mb-[26rem] relative">
+        <div className="w-3/4 mx-auto ">
+          <div className="container mx-auto py-4">
+            <button
+              onClick={() => optionClick("صفحه اصلی")}
+              className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
+            >
+              بازگشت
+            </button>
+
+            {buyDetails["address"] && (
+              <Table
+                rows={[
+                  {
+                    prescription: buyDetails.prescription,
+                    address: buyDetails.address,
+                    type: buyDetails.type == "local" ? "حضوری" : "پیک",
+                    price: buyDetails.price,
+                    buy: (
+                      <button
+                        onClick={() => {
+                          selectPharm(buyDetails.id, buyDetails.type);
+                        }}
+                        className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-500 mb-10"
+                      >
+                        خرید
+                      </button>
+                    ),
+                  },
+                ]}
+                columns={["نسخه", "آدرس", "نحوه دریافت", "قیمت", "خرید"]}
+                paginated={false}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (pageName == "تاریخچه") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
@@ -712,7 +779,7 @@ function Content({ optionClick, pageName }) {
     );
   }
 
-  const presDetailsCol = ["آدرس", "عملگر"];
+  const presDetailsCol = ["آدرس", "قیمت", "عملگر"];
 
   if (pageName == "نسخه ها") {
     return (
