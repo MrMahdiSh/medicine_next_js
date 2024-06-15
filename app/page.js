@@ -89,14 +89,13 @@ function Content() {
           phone,
           verification_code: code,
         });
-        console.log(data);
         setIsLoading(false);
-        if (data.role[0] == "admin") {
-          adminLogingSuccess();
-          return;
-        }
         if (data["user_details"]["meli_code"]) {
-          HandleLoginSuccess();
+          if (data.role[0] != "admin") {
+            HandleLoginSuccess();
+          } else {
+            adminLogingSuccess();
+          }
         } else {
           setTitle("اطلاعات");
         }
