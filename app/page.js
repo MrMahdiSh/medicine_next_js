@@ -119,9 +119,9 @@ function Content() {
   async function submitDetails() {
     try {
       await fetchData(
-        "user/update",
-        "PUT",
-        { name, last_name: lastName, meli_code: meliCode },
+        "Auth/register_send_code",
+        "POST",
+        { name, last_name: lastName, meli_code: meliCode, phone: "sdf" },
         localStorage.getItem("token")
       );
       HandleLoginSuccess();
@@ -165,7 +165,7 @@ function Content() {
           <MainButton
             isLoading={isLoading}
             onclick={() => {
-              handleInputPhone();
+              setTitle("اطلاعات");
             }}
             text={"ادامه"}
           />
@@ -239,11 +239,21 @@ function Content() {
             type={"number"}
           />
 
-          <MainButton
-            text={"ثبت"}
-            isLoading={isLoading}
-            onclick={submitDetails}
-          />
+          <div className="w-full flex flex-col">
+            <MainButton
+              text={"ثبت"}
+              isLoading={isLoading}
+              onclick={submitDetails}
+            />
+            <RoundedButton
+              isLoading={isLoading}
+              onclick={() => {
+                setCode(["", "", "", ""]);
+                setTitle("عضویت");
+              }}
+              text={"بازگشت به صفحه قبل"}
+            />
+          </div>
         </div>
       ) : title === "ورود" ? (
         <></>
