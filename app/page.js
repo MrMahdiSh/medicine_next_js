@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import MainInput from "@/components/input";
+import PhoneInput from "@/components/phoneInput";
 import MainButton from "@/components/MainButton";
+import RoundedButton from "@/components/RoundedButton";
 import { toast } from "react-toastify";
 import { fetchData } from "@/utils/api";
 import { useRouter } from "next/navigation";
@@ -24,7 +26,7 @@ export default function App() {
 }
 
 function Content() {
-  const [title, setTitle] = useState("حساب کاربری");
+  const [title, setTitle] = useState("عضویت");
 
   const [phone, setPhone] = useState("");
 
@@ -34,6 +36,9 @@ function Content() {
 
   function handleCodeInputChange(value, index) {
     if (/^\d$/.test(value) || value === "") {
+      if (value.length === 1 && index < code.length - 1) {
+        inputsRef.current[index + 1].focus();
+      }
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
@@ -132,6 +137,12 @@ function Content() {
 
   const [meliCode, setMeliCode] = useState("");
 
+  function goToSignIn() {
+    setTitle("ورود");
+  }
+
+  const inputsRef = useRef([]);
+
   return (
     <div>
       {/* title */}
@@ -142,9 +153,9 @@ function Content() {
         {title}
       </h1>
 
-      {title === "حساب کاربری" ? (
+      {title === "عضویت" ? (
         <div className="w-full flex flex-col gap-10">
-          <MainInput
+          <PhoneInput
             isLoading={isLoading}
             theOnChange={getPhone}
             placeholder={"شماره تلفن"}
@@ -158,6 +169,14 @@ function Content() {
             }}
             text={"ادامه"}
           />
+
+          <h1
+            onClick={goToSignIn}
+            className="mx-auto flex items-center gap-3 cursor-pointer"
+          >
+            <span>&lt;</span>
+            <span className="mr-2">قبلا ثبت نام کرده ام</span>
+          </h1>
         </div>
       ) : title === "کد تایید" ? (
         <div className="flex flex-col">
@@ -166,6 +185,7 @@ function Content() {
               {code.map((char, index) => (
                 <input
                   key={index}
+                  ref={(el) => (inputsRef.current[index] = el)}
                   type="number"
                   maxLength="1"
                   value={char}
@@ -182,6 +202,14 @@ function Content() {
               handleValidCode(code[0] + code[1] + code[2] + code[3]);
             }}
             text={"تایید"}
+          />
+          <RoundedButton
+            isLoading={isLoading}
+            onclick={() => {
+              setCode(["", "", "", ""]);
+              setTitle("عضویت");
+            }}
+            text={"بازگشت به صفحه قبل"}
           />
         </div>
       ) : title === "اطلاعات" ? (
@@ -217,6 +245,8 @@ function Content() {
             onclick={submitDetails}
           />
         </div>
+      ) : title === "ورود" ? (
+        <></>
       ) : (
         <></>
       )}
