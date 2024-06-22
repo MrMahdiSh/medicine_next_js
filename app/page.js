@@ -122,8 +122,8 @@ function Content() {
     if (code.length === 4) {
       setIsLoading(true);
       try {
-        const data = await fetchData("Auth/verifyAccount", "POST", {
-          phone,
+        const data = await fetchData("Auth/login", "POST", {
+          meli_code: meliCode,
           verification_code: code,
         });
         setIsLoading(false);
@@ -160,6 +160,17 @@ function Content() {
       setTitle("کد تایید");
     } catch (e) {
       toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
+    }
+  }
+
+  async function loginMeliCodeInputHandle() {
+    setIsRegister(false);
+    try {
+      await fetchData("Auth/lgin_send_code", "POST", { meli_code: meliCode });
+      setTitle("کد تایید");
+    } catch (error) {
+      setTitle("عضویت");
+      toast.error("کاربر با این کد ملی وجود ندارد");
     }
   }
 
@@ -291,7 +302,30 @@ function Content() {
           </div>
         </div>
       ) : title === "ورود" ? (
-        <></>
+        <div className="w-full flex flex-col gap-10">
+          <MainInput
+            theOnChange={(e) => {
+              setMeliCode(e.target.value);
+            }}
+            placeholder={"کد ملی"}
+          />
+
+          <MainButton
+            onclick={loginMeliCodeInputHandle}
+            isLoading={isLoading}
+            text={"تایید"}
+          />
+
+          <RoundedButton
+            isLoading={isLoading}
+            onclick={() => {
+              setCode(["", "", "", ""]);
+              setTitle("عضویت");
+              setMeliCode("");
+            }}
+            text={"بازگشت به صفحه قبل"}
+          />
+        </div>
       ) : (
         <></>
       )}
