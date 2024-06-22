@@ -34,6 +34,8 @@ function Content() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isRegister, setIsRegister] = useState(true);
+
   function handleCodeInputChange(value, index) {
     if (/^\d$/.test(value) || value === "") {
       if (value.length === 1 && index < code.length - 1) {
@@ -86,7 +88,37 @@ function Content() {
     router.push("/admin");
   }
 
-  async function handleValidCode(code) {
+  async function handleValidCodeRegister(code) {
+    if (code.length === 4) {
+      setIsLoading(true);
+      try {
+        const data = await fetchData("Auth/register", "POST", {
+          phone,
+          verification_code: code,
+        });
+        setIsLoading(false);
+        if (data["user_details"]["meli_code"]) {
+          if (data.role[0] != "admin") {
+            HandleLoginSuccess();
+          } else {
+            adminLogingSuccess();
+          }
+        } else {
+          setTitle("اطلاعات");
+        }
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user_details", JSON.stringify(data.user_details));
+        localStorage.setItem("user_role", data.role[0]);
+      } catch (e) {
+        setIsLoading(false);
+        toast.error("کد وارد شده صحیح نیست");
+      }
+    } else {
+      toast.error("کد وارد شده صحیح نیست");
+    }
+  }
+
+  async function handleValidCodeLogin(code) {
     if (code.length === 4) {
       setIsLoading(true);
       try {
@@ -118,13 +150,14 @@ function Content() {
 
   async function submitDetails() {
     try {
-      await fetchData(
-        "Auth/register_send_code",
-        "POST",
-        { name, last_name: lastName, meli_code: meliCode, phone: "sdf" },
-        localStorage.getItem("token")
-      );
-      HandleLoginSuccess();
+      await fetchData("Auth/register_send_code", "POST", {
+        name,
+        last_name: lastName,
+        meli_code: meliCode,
+        phone: phone,
+      });
+      setIsRegister(true);
+      setTitle("کد تایید");
     } catch (e) {
       toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
     }
@@ -199,7 +232,9 @@ function Content() {
           <MainButton
             isLoading={isLoading}
             onclick={() => {
-              handleValidCode(code[0] + code[1] + code[2] + code[3]);
+              isRegister
+                ? handleValidCodeRegister(code[0] + code[1] + code[2] + code[3])
+                : handleValidCodeLogin(code[0] + code[1] + code[2] + code[3]);
             }}
             text={"تایید"}
           />
