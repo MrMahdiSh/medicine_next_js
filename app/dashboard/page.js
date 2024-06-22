@@ -7,6 +7,7 @@ import {
   FaClipboardList,
   FaUser,
   FaClinicMedical,
+  FaPencilAlt,
 } from "react-icons/fa";
 import MainInput from "@/components/input";
 import MainButton from "@/components/MainButton";
@@ -110,7 +111,7 @@ const userInfo = {
     {
       name: "کدملی",
       type: "number",
-      editable: true,
+      editable: false,
       enName: "meli_code",
     },
     {
@@ -291,7 +292,7 @@ function Content({ optionClick, pageName }) {
         icon: FaClinicMedical,
       },
       {
-        name: "اطلاعات شخصی",
+        name: "پروفایل",
         icon: FaUserFriends,
       },
     ],
@@ -301,7 +302,7 @@ function Content({ optionClick, pageName }) {
         icon: FaClipboardList,
       },
       {
-        name: "اطلاعات شخصی",
+        name: "پروفایل",
         icon: FaUserFriends,
       },
     ],
@@ -315,7 +316,7 @@ function Content({ optionClick, pageName }) {
         icon: FaClinicMedical,
       },
       {
-        name: "اطلاعات شخصی",
+        name: "پروفایل",
         icon: FaUserFriends,
       },
     ],
@@ -885,10 +886,17 @@ function Content({ optionClick, pageName }) {
     } catch (error) {}
   }
 
-  if (pageName == "اطلاعات شخصی") {
+  if (pageName == "پروفایل") {
     return (
       <div className="w-full h-[10px] mb-[24rem] lg:mb-40 relative">
-        <div className="w-3/4 mx-auto ">
+        <div className="w-3/4 mx-auto mt-[-111px]">
+          <button
+            onClick={() => optionClick("صفحه اصلی")}
+            className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
+          >
+            بازگشت
+          </button>
+
           <div className="w-full flex flex-col-reverse lg:flex-row gap-10 justify-around">
             <div className="lg:w-[70%] w-[100%]">
               <div className="bg-white shadow-xl rounded-2xl p-2 lg:p-16">
@@ -905,6 +913,7 @@ function Content({ optionClick, pageName }) {
                         }}
                         editable={user.editable}
                         placeholder={user.name}
+                        icon={user.editable ? <FaPencilAlt /> : null}
                         type={user.type}
                         val={theUserDetail[user.enName] ?? ""}
                       />
@@ -912,14 +921,6 @@ function Content({ optionClick, pageName }) {
                   );
                 })}
                 <div className="flex justify-around gap-5">
-                  <MainButton
-                    color={"#ef4444"}
-                    isLoading={false}
-                    text={"لغو"}
-                    onclick={() => {
-                      optionClick("صفحه اصلی");
-                    }}
-                  />
                   <MainButton
                     onclick={() => {
                       UpdateUserInfo();

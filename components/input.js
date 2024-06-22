@@ -8,6 +8,7 @@ export default function MainInput({
   isLoading,
   editable = true,
   val = "",
+  icon = null,
 }) {
   const [value, setValue] = useState(val);
 
@@ -17,8 +18,14 @@ export default function MainInput({
       theOnChange(e);
     }
   }
+
   return (
-    <div>
+    <div className="relative w-full h-[60px]">
+      {icon && (
+        <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+          {icon}
+        </div>
+      )}
       <input
         style={{
           direction: type === "text" ? "rtl" : "ltr",
