@@ -150,12 +150,13 @@ function Content() {
 
   async function submitDetails() {
     try {
-      await fetchData("Auth/register_send_code", "POST", {
+      const code = await fetchData("Auth/register_send_code", "POST", {
         name,
         last_name: lastName,
         meli_code: meliCode,
         phone: phone,
       });
+      toast.success(code["message"]);
       setIsRegister(true);
       setTitle("کد تایید");
     } catch (e) {
@@ -166,7 +167,10 @@ function Content() {
   async function loginMeliCodeInputHandle() {
     setIsRegister(false);
     try {
-      await fetchData("Auth/lgin_send_code", "POST", { meli_code: meliCode });
+      const code = await fetchData("Auth/lgin_send_code", "POST", {
+        meli_code: meliCode,
+      });
+      toast.success(code["message"]);
       setTitle("کد تایید");
     } catch (error) {
       setTitle("عضویت");
