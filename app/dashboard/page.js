@@ -296,14 +296,17 @@ function Content({ optionClick, pageName }) {
       {
         name: "تاریخچه",
         imageUrl: "dashboard/addTask.png",
+        imageUrlHover: "dashboard/addTaskHover.png",
       },
       {
         name: "ثبت نسخه",
         imageUrl: "dashboard/pres.png",
+        imageUrlHover: "dashboard/presHover.png",
       },
       {
         name: "پروفایل",
         imageUrl: "dashboard/doctor.png",
+        imageUrlHover: "dashboard/doctorHover.png",
       },
     ],
     user: [
@@ -909,7 +912,12 @@ function Content({ optionClick, pageName }) {
 
           <div className="w-full flex flex-col-reverse lg:flex-row gap-10 justify-around">
             <div className="lg:w-[70%] w-[100%]">
-              <div className="bg-white shadow-xl rounded-2xl p-2 lg:p-16">
+              <div
+                style={{
+                  boxShadow: "rgba(17, 12, 46, 0.1) 0px 10px 50px 0px",
+                }}
+                className="bg-white rounded-2xl p-2 lg:p-16"
+              >
                 {userInfo[userRole].map((user, index) => {
                   return (
                     <div
@@ -942,7 +950,12 @@ function Content({ optionClick, pageName }) {
               </div>
             </div>
             <div className="lg:w-[30%] w-[100%] ">
-              <div className="bg-white h-[70vh] shadow-xl rounded-2xl relative">
+              <div
+                style={{
+                  boxShadow: "rgba(17, 12, 46, 0.1) 0px 10px 50px 0px",
+                }}
+                className="bg-white h-[70vh] rounded-2xl relative"
+              >
                 {/* user profile */}
                 <div className="h-[200px] w-full flex justify-center items-center">
                   <div className="rounded-full bg-gray-500 w-40 h-40 flex items-center justify-center">
@@ -1012,6 +1025,15 @@ function Content({ optionClick, pageName }) {
                       size={120}
                       style={{ color: isHovered ? "#EE8D20" : "" }}
                     />
+                  ) : isHovered ? (
+                    <div className="w-[70%] h-[70%] relative">
+                      <Image
+                        src={option.imageUrlHover}
+                        alt={option.name}
+                        layout="fill"
+                        objectFit="contain"
+                      />
+                    </div>
                   ) : (
                     <div className="w-[70%] h-[70%] relative">
                       <Image
