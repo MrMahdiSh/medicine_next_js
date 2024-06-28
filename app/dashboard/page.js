@@ -72,7 +72,10 @@ export default function Dashboard() {
         }}
       />
       <div className="h-[440px] w-full relative">
-        <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-0 lg:flex-row justify-around items-center">
+        <h1 className="text-center text-2xl absolute w-full font-bold mt-16">
+          {title == "صفحه اصلی" ? "" : title}
+        </h1>
+        <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-[2rem] lg:flex-row justify-around items-center">
           <Content optionClick={handleOptionClick} pageName={title} />
         </div>
         <div className="w-full h-1/2 bg-[#A1BEE54F]"></div>
@@ -895,7 +898,7 @@ function Content({ optionClick, pageName }) {
 
   if (pageName == "پروفایل") {
     return (
-      <div className="w-full h-[10px] mb-[24rem] lg:mb-40 relative">
+      <div className="w-full h-[10px] mb-[24rem] lg:mb-[2rem] relative">
         <div className="w-3/4 mx-auto mt-[-111px]">
           <button
             onClick={() => optionClick("صفحه اصلی")}
