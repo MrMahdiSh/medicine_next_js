@@ -147,7 +147,7 @@ const userInfo = {
     {
       name: "کدملی",
       type: "number",
-      editable: true,
+      editable: false,
       enName: "meli_code",
     },
     {
@@ -941,8 +941,8 @@ function Content({ optionClick, pageName }) {
                 </div>
               </div>
             </div>
-            <div className="lg:w-[30%] w-[100%]">
-              <div className="bg-white h-[55vh] shadow-xl rounded-2xl relative">
+            <div className="lg:w-[30%] w-[100%] ">
+              <div className="bg-white h-[70vh] shadow-xl rounded-2xl relative">
                 {/* user profile */}
                 <div className="h-[200px] w-full flex justify-center items-center">
                   <div className="rounded-full bg-gray-500 w-40 h-40 flex items-center justify-center">
