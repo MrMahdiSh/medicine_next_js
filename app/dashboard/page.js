@@ -407,7 +407,7 @@ function Content({ optionClick, pageName }) {
       setPredcriptionDone(true);
       setIsLoading(false);
     } catch (e) {
-      setIsLoading(true);
+      setIsLoading(false);
       toast.error("مشکلی پیش آمده");
     }
   }
@@ -689,40 +689,51 @@ function Content({ optionClick, pageName }) {
             </button>
 
             <div className="w-full bg-white rounded-3xl shadow-2xl p-10">
-              <div
-                style={{ direction: "rtl" }}
-                className="flex flex-wrap justify-between gap-10"
-              >
-                {prescirptionDetails.map((prescription, index) => {
-                  return (
-                    <div className="min-w-[45%] m-0" key={index}>
-                      {
+              <div className="mt-5 flex justify-center">
+                <table className="table-auto w-full">
+                  <thead>
+                    <tr>
+                      <th className="px-6 py-4 border-b-2"></th>
+                      <th className="px-6 py-4 border-b-2">کدملی</th>
+                      <th className="px-6 py-4 border-b-2">نسخه</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="pt-12">
+                      <td className="px-6 py-4 flex justify-center items-center">
+                        <div className="w-[183.05px] h-[50px]">
+                          <MainButton
+                            onclick={() => {
+                              IsUserAwailable();
+                            }}
+                            isLoading={isLoading}
+                            text={"ثبت نسخه"}
+                            preDesign={false}
+                          />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <MainInput
+                          theOnChange={(e) => handleInputChange(e, "meli_code")}
+                          isLoading={isLoading}
+                          type="text"
+                          placeholder="کدملی"
+                        />
+                      </td>
+                      <td className="px-6 py-4">
                         <MainInput
                           theOnChange={(e) =>
-                            handleInputChange(e, prescription.enName)
+                            handleInputChange(e, "prescription")
                           }
                           isLoading={isLoading}
-                          type={prescription.type}
-                          placeholder={prescription.name}
+                          type="text"
+                          placeholder="نسخه"
                         />
-                      }
-                    </div>
-                  );
-                })}
-              </div>
-              {
-                <div className="mt-5 flex flex-row-reverse">
-                  <div>
-                    <MainButton
-                      onclick={() => {
-                        IsUserAwailable();
-                      }}
-                      isLoading={isLoading}
-                      text={"ثبت"}
-                    />
-                  </div>
-                </div>
-              }
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>{" "}
             </div>
           </div>
         </div>
