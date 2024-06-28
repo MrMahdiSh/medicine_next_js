@@ -18,7 +18,7 @@ export default function MainInput({
     }
   }
   return (
-    <div className="relative w-full h-[60px]">
+    <div className="relative w-full h-full">
       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
         +98 |
       </span>
@@ -26,7 +26,7 @@ export default function MainInput({
         style={{
           direction: "rtl",
         }}
-        className={`w-full h-[60px] p-3 rounded-lg shadow-md`}
+        className={`w-full h-[70px] p-3 rounded-lg shadow-md`}
         type={type}
         placeholder={placeholder}
         onChange={handleChange}

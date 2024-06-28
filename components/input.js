@@ -28,7 +28,7 @@ export default function MainInput({
       )}
       <input
         style={{
-          direction: type === "text" ? "rtl" : "ltr",
+          direction: "rtl",
         }}
         className={`w-full h-[60px] p-3 rounded-lg shadow-md`}
         type={type}

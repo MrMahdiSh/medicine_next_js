@@ -195,8 +195,8 @@ function Content() {
     <div>
       {/* title */}
       <h1
-        style={{ fontWeight: "bold", fontSize: "20px" }}
-        className="text-center mb-16"
+        style={{ fontWeight: "bold", fontSize: "25px" }}
+        className="text-center mb-16 mt-16"
       >
         {title}
       </h1>

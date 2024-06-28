@@ -65,7 +65,12 @@ export default function Dashboard() {
 
   return (
     <div className="h-dvh">
-      <Header title={title} />
+      <Header
+        title={title}
+        changePage={() => {
+          setTitle("صفحه اصلی");
+        }}
+      />
       <div className="h-[440px] w-full relative">
         <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-0 lg:flex-row justify-around items-center">
           <Content optionClick={handleOptionClick} pageName={title} />
@@ -76,11 +81,13 @@ export default function Dashboard() {
   );
 }
 
-function Header({ title }) {
+function Header({ title, changePage }) {
   return (
-    <div className="h-[200px] bg-white p-10 flex justify-end items-center">
+    <div className="h-[200px] bg-white p-10 mr-10 flex justify-end items-center">
       <div className="flex items-center gap-2">
-        <h1>{title}</h1>
+        <h1 onClick={changePage} className="hover:text-blue-700 cursor-pointer">
+          صفحه اصلی
+        </h1>
         <div style={{ width: "30px", height: "30px" }}>
           <Image
             src={`${ROOT}/dashboard/home.png`}
@@ -285,15 +292,15 @@ function Content({ optionClick, pageName }) {
     doctor: [
       {
         name: "تاریخچه",
-        icon: FaClipboardList,
+        imageUrl: "dashboard/addTask.png",
       },
       {
         name: "ثبت نسخه",
-        icon: FaClinicMedical,
+        imageUrl: "dashboard/pres.png",
       },
       {
         name: "پروفایل",
-        icon: FaUserFriends,
+        imageUrl: "dashboard/doctor.png",
       },
     ],
     user: [
@@ -975,7 +982,10 @@ function Content({ optionClick, pageName }) {
           const isHovered = hoveredOption === option.name;
           const innerShadowStyle = isHovered
             ? { boxShadow: "inset 0 0 30px rgba(0, 0, 0, 0.2)" }
-            : {};
+            : { boxShadow: "rgba(17, 12, 46, 0.15) 0px 10px 50px 0px" };
+          const innerShadowStyleText = isHovered
+            ? { boxShadow: "inset 0 0 30px rgba(0, 0, 0, 0.1)" }
+            : { boxShadow: "rgba(17, 12, 46, 0.15) 0px 0px 50px 0px" };
 
           return (
             <div
@@ -988,21 +998,40 @@ function Content({ optionClick, pageName }) {
               }}
             >
               <div
-                className={`w-[354.33px] h-[354.33px] bg-white rounded-3xl cursor-pointer overflow-hidden shadow-2xl ${
+                className={`w-[354.33px] h-[354.33px] bg-white rounded-[37px] cursor-pointer overflow-hidden ${
                   isHovered ? "shadow-none" : ""
                 }`}
                 style={innerShadowStyle}
               >
-                <div className="h-[70%] flex justify-center items-center">
-                  <option.icon
-                    size={100}
-                    style={{ color: isHovered ? "#EE8D20" : "" }}
-                  />
+                <div className="h-[70%] pt-10 flex justify-center items-center">
+                  {option.icon ? (
+                    <option.icon
+                      size={120}
+                      style={{ color: isHovered ? "#EE8D20" : "" }}
+                    />
+                  ) : (
+                    <div className="w-[70%] h-[70%] relative">
+                      <Image
+                        src={option.imageUrl}
+                        alt={option.name}
+                        layout="fill"
+                        objectFit="contain"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="h-[30%] flex justify-center items-center">
-                  <h1 style={{ color: isHovered ? "#EE8D20" : "" }}>
-                    {option.name}
-                  </h1>
+                  <div
+                    style={innerShadowStyleText}
+                    className="w-[70%] h-[50%] rounded-2xl mx-auto flex justify-center items-center"
+                  >
+                    <h1
+                      className="font-bold text-lg"
+                      style={{ color: isHovered ? "#EE8D20" : "#343434" }}
+                    >
+                      {option.name}
+                    </h1>
+                  </div>
                 </div>
               </div>
             </div>
