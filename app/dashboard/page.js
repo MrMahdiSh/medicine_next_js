@@ -407,7 +407,7 @@ function Content({ optionClick, pageName }) {
       setPredcriptionDone(true);
       setIsLoading(false);
     } catch (e) {
-      setIsLoading(false);
+      setIsLoading(true);
       toast.error("مشکلی پیش آمده");
     }
   }
