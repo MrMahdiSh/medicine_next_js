@@ -612,6 +612,8 @@ function Content({ optionClick, pageName }) {
     } catch (e) {}
   }
 
+  const [selectedPres, setSelectedPres] = useState([]);
+
   async function getPres() {
     try {
       const pres = await fetchData(
@@ -629,7 +631,8 @@ function Content({ optionClick, pageName }) {
               <div className="w-[183.05px] h-[40px]">
                 <MainButton
                   onclick={() => {
-                    pharmAccept(thePres["id"]);
+                    optionClick("تایید نسخه");
+                    setSelectedPres(thePres);
                   }}
                   text={"ثبت نسخه"}
                   preDesign={false}
@@ -664,6 +667,50 @@ function Content({ optionClick, pageName }) {
     } catch (error) {}
   }
 
+  if (pageName == "تایید نسخه") {
+    return (
+      <div className="w-full h-[10px] mb-[26rem] relative">
+        <div className="w-3/4 mx-auto ">
+          <div className="container mx-auto py-4">
+            <button
+              onClick={() => optionClick("صفحه اصلی")}
+              className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
+            >
+              بازگشت
+            </button>
+
+            <Table
+              rows={[
+                {
+                  prescription: selectedPres["prescription"],
+                  meli_code: selectedPres["user"]["meli_code"],
+                  price: <MainInput type={"number"} placeholder={"قیمت"} />,
+                  notAvailable: (
+                    <MainInput placeholder={"دارو هایی که موجود نیست"} />
+                  ),
+                  action: (
+                    <div className="w-full h-full flex justify-center items-center">
+                      <div className="w-[183.05px] h-[40px]">
+                        <MainButton
+                          onclick={() => {
+                            pharmAccept(selectedPres["id"]);
+                          }}
+                          text={"تایید نسخه"}
+                          preDesign={false}
+                          isLoading={isLoading}
+                        />
+                      </div>
+                    </div>
+                  ),
+                },
+              ]}
+              columns={["نسخه", "کدملی", "قیمت", "ناموجودها", "تایید"]}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (pageName == "ثبت نسخه") {
     if (prescriptionSubmited && !isLoading && prescriptionDone) {
       return (
@@ -916,10 +963,7 @@ function Content({ optionClick, pageName }) {
             </button>
 
             {rows && userRole && (
-              <Table
-                columns={["نسخه", "کدملی", "عملگر"]}
-                rows={pharmacyPresList}
-              />
+              <Table columns={["نسخه", "کدملی", ""]} rows={pharmacyPresList} />
             )}
           </div>
         </div>
