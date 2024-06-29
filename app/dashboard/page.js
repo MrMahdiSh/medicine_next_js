@@ -248,6 +248,13 @@ function Content({ optionClick, pageName }) {
     prescription: undefined,
   });
 
+  const paginationInfo = {
+    behaviour: 1,
+    doctor: 1,
+    pharmacy: 1,
+    patient: 1,
+  };
+
   // user behavior
   const prescirptionDetails = [
     {
@@ -531,13 +538,13 @@ function Content({ optionClick, pageName }) {
     }
   }
 
-  async function getUserBehavior() {
+  async function getUserBehavior(page = 1) {
     const temperoryUserRole = localStorage.getItem("user_role");
 
     try {
       const userBehave = await fetchData(
         temperoryUserRole == "doctor"
-          ? "doctor/history"
+          ? "doctor/history" + "?page=" + page
           : temperoryUserRole == "user"
           ? "patient/patient_prescriptions"
           : "pharmacy/history",
@@ -547,9 +554,9 @@ function Content({ optionClick, pageName }) {
       );
 
       if (temperoryUserRole == "doctor") {
-        var filteredData = userBehave["hist_details"].map((behave) => {
+        var filteredData = userBehave["hist_details"]["data"].map((behave) => {
           return {
-            user: behave.user.name + behave.user.last_name,
+            user: behave.user.name + "" + behave.user.last_name,
             created_at: behave.created_at,
             prescription: behave.prescription,
             type: behave.Insurance,
@@ -597,7 +604,11 @@ function Content({ optionClick, pageName }) {
         });
       }
 
-      setRows(filteredData);
+      setRows({
+        data: filteredData,
+        current_page: userBehave["hist_details"]["current_page"],
+        total: userBehave["hist_details"]["last_page"],
+      });
     } catch (e) {}
   }
 
@@ -612,15 +623,20 @@ function Content({ optionClick, pageName }) {
       const filtered = pres["prescriptions"].map((thePres) => {
         return {
           prescription: thePres["prescription"],
+          meli_code: thePres["user"]["meli_code"],
           action: (
-            <button
-              onClick={() => {
-                pharmAccept(thePres["id"]);
-              }}
-              className="bg-blue-500 hover:bg-blue-700 cursor-pointer text-white font-bold py-2 px-4 rounded"
-            >
-              تایید
-            </button>
+            <div className="w-full h-full flex justify-center items-center">
+              <div className="w-[183.05px] h-[40px]">
+                <MainButton
+                  onclick={() => {
+                    pharmAccept(thePres["id"]);
+                  }}
+                  text={"ثبت نسخه"}
+                  preDesign={false}
+                  isLoading={isLoading}
+                />
+              </div>
+            </div>
           ),
         };
       });
@@ -831,7 +847,14 @@ function Content({ optionClick, pageName }) {
             </button>
 
             {rows && userRole && (
-              <Table columns={columns[userRole]} rows={rows} />
+              <Table
+                paginated={true}
+                changePage={(number) => {
+                  getUserBehavior(paginationInfo["behaviour"] + number);
+                }}
+                columns={columns[userRole]}
+                rows={rows}
+              />
             )}
           </div>
         </div>
@@ -893,7 +916,10 @@ function Content({ optionClick, pageName }) {
             </button>
 
             {rows && userRole && (
-              <Table columns={["نسخه", "عملگر"]} rows={pharmacyPresList} />
+              <Table
+                columns={["نسخه", "کدملی", "عملگر"]}
+                rows={pharmacyPresList}
+              />
             )}
           </div>
         </div>

@@ -2,8 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { formatDate } from "../utils/formatDate";
+import Image from "next/image";
 
-const Table = ({ columns, rows, paginated = false, changePage }) => {
+const Table = ({
+  columns,
+  rows,
+  paginated = false,
+  changePage,
+  isNew = false,
+}) => {
   const tableContainerRef = useRef(null);
 
   useEffect(() => {
@@ -27,101 +34,121 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
           justifyContent: "center",
           alignItems: "center",
         }}
-      >
-        {rows && (
-          <>
-            <table
-              className="min-w-full bg-white border border-gray-200 whitespace-nowrap"
-              style={{ direction: "ltr", padding: "0 16px", border: "none" }}
-            >
-              <thead>
-                <tr>
-                  {[...columns].reverse().map((column, index) => (
-                    <th
-                      key={index}
-                      className="py-4 px-6 border-b border-[#525252] text-center"
-                    >
-                      {column}
-                    </th>
+      ></div>
+      {rows && (
+        <>
+          <table
+            className="min-w-full bg-white border border-gray-200 whitespace-nowrap"
+            style={{ direction: "ltr", padding: "0 16px", border: "none" }}
+          >
+            <thead>
+              <tr>
+                {[...columns].reverse().map((column, index) => (
+                  <th
+                    key={index}
+                    className="py-4 px-6 border-b border-[#525252] text-center"
+                  >
+                    {column}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {paginated === false
+                ? rows.length > 0 &&
+                  [...rows].reverse().map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {Object.entries(row)
+                        .reverse()
+                        .map(([key, cell], cellIndex) => (
+                          <td
+                            key={cellIndex}
+                            className={`py-4 px-6 ${
+                              rowIndex === rows.length - 1
+                                ? ""
+                                : "border-b border-[#525252]"
+                            } text-center`}
+                          >
+                            {key === "created_at" || key === "updated_at"
+                              ? formatDate(cell)
+                              : cell}
+                          </td>
+                        ))}
+                    </tr>
+                  ))
+                : rows["data"] &&
+                  rows["data"].length > 0 &&
+                  [...rows["data"]].reverse().map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {Object.entries(row)
+                        .reverse()
+                        .map(([key, cell], cellIndex) => (
+                          <td
+                            key={cellIndex}
+                            className={`py-4 px-6 border-b border-[#525252] text-center`}
+                          >
+                            {key === "created_at" || key === "updated_at"
+                              ? formatDate(cell)
+                              : cell}
+                          </td>
+                        ))}
+                    </tr>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
-                {paginated === false
-                  ? rows.length > 0 &&
-                    [...rows].reverse().map((row, rowIndex) => (
-                      <tr key={rowIndex}>
-                        {Object.entries(row)
-                          .reverse()
-                          .map(([key, cell], cellIndex) => (
-                            <td
-                              key={cellIndex}
-                              className={`py-4 px-6 ${
-                                rowIndex === rows.length - 1
-                                  ? ""
-                                  : "border-b border-[#525252]"
-                              } text-center`}
-                            >
-                              {key === "created_at" || key === "updated_at"
-                                ? formatDate(cell)
-                                : cell}
-                            </td>
-                          ))}
-                      </tr>
-                    ))
-                  : rows["data"] &&
-                    rows["data"].length > 0 &&
-                    [...rows["data"]].reverse().map((row, rowIndex) => (
-                      <tr key={rowIndex}>
-                        {Object.entries(row)
-                          .reverse()
-                          .map(([key, cell], cellIndex) => (
-                            <td
-                              key={cellIndex}
-                              className={`py-4 px-6 border-b border-[#525252] text-center`}
-                            >
-                              {key === "created_at" || key === "updated_at"
-                                ? formatDate(cell)
-                                : cell}
-                            </td>
-                          ))}
-                      </tr>
-                    ))}
-              </tbody>
-            </table>
-            {paginated && rows["data"] && (
-              <div className="flex justify-center mt-4">
-                <button
-                  onClick={() => {
-                    changePage(1);
-                  }}
-                  disabled={rows["total"] === rows["current_page"]}
-                  className={`px-4 py-2 mx-1 border rounded ${
-                    rows["total"] !== rows["current_page"] ? "bg-blue-400" : ""
-                  }`}
-                >
-                  بعدی
-                </button>
+            </tbody>
+          </table>
+          {paginated && rows["data"] && (
+            <div className="flex justify-end mt-10">
+              {rows["current_page"] > 1 && (
+                <>
+                  <button
+                    onClick={() => {
+                      changePage(-1);
+                    }}
+                    disabled={rows["current_page"] === 1}
+                    className={`w-[30px] h-[30px] my-auto mx-1 border rounded-lg bg-[#175FBD]`}
+                  >
+                    <Image
+                      src="../dashboard/reversArrow.png"
+                      className="mx-auto my-auto"
+                      alt="Previous"
+                      width={7}
+                      height={7}
+                    />
+                  </button>
+                  <span className="mx-2 flex justify-center items-center">
+                    صفحه قبلی
+                  </span>
+                </>
+              )}
 
-                <span className="px-4 py-2 mx-1">
-                  صفحه {rows["current_page"]} از {rows["total"]}
-                </span>
-                <button
-                  onClick={() => {
-                    changePage(-1);
-                  }}
-                  disabled={rows["current_page"] === 1}
-                  className={`px-4 py-2 mx-1 border rounded ${
-                    rows["current_page"] === 1 ? "" : "bg-blue-400"
-                  }`}
-                >
-                  قبلی
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+              {rows["current_page"] < rows["total"] && (
+                <>
+                  <div className="mx-5"></div>{" "}
+                  {/* Extra space between previous and next */}
+                  <span className="mx-2 flex justify-center items-center">
+                    صفحه بعدی
+                  </span>
+                  <button
+                    onClick={() => {
+                      changePage(1);
+                    }}
+                    disabled={rows["total"] === rows["current_page"]}
+                    className={`w-[30px] h-[30px] my-auto mx-1 border rounded-lg bg-[#175FBD]`}
+                  >
+                    <Image
+                      src="../dashboard/arrow.png"
+                      className="mx-auto my-auto"
+                      alt="Next"
+                      width={7}
+                      height={7}
+                    />
+                  </button>
+                </>
+              )}
+            </div>
+          )}{" "}
+        </>
+      )}
     </div>
   );
 };
