@@ -39,7 +39,7 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
                   {[...columns].reverse().map((column, index) => (
                     <th
                       key={index}
-                      className="py-4 px-6 border-b border-black text-center"
+                      className="py-4 px-6 border-b border-[#525252] text-center"
                     >
                       {column}
                     </th>
@@ -59,7 +59,7 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
                               className={`py-4 px-6 ${
                                 rowIndex === rows.length - 1
                                   ? ""
-                                  : "border-b border-black"
+                                  : "border-b border-[#525252]"
                               } text-center`}
                             >
                               {key === "created_at" || key === "updated_at"
@@ -78,7 +78,7 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
                           .map(([key, cell], cellIndex) => (
                             <td
                               key={cellIndex}
-                              className={`py-4 px-6 border-b border-black text-center`}
+                              className={`py-4 px-6 border-b border-[#525252] text-center`}
                             >
                               {key === "created_at" || key === "updated_at"
                                 ? formatDate(cell)

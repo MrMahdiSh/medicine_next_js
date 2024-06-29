@@ -17,7 +17,7 @@ export default function App() {
       style={{ backgroundImage: `url(${ROOT}/index/bg.jfif)` }}
     >
       <div className="w-full h-full bg-[#33629F4D] p-0 sm:p-20 backdrop-blur-md">
-        <div className="h-full w-full lg:w-1/2 bg-[#E0EBF9A6] sm:rounded-lg p-10">
+        <div className="h-full w-full lg:w-1/2 lg:mx-auto bg-[#E0EBF9A6] sm:rounded-lg p-10">
           <Content />
         </div>
       </div>
