@@ -75,7 +75,7 @@ export default function Dashboard() {
         <h1 className="text-center text-2xl absolute w-full font-bold mt-16">
           {title == "صفحه اصلی" ? "" : title}
         </h1>
-        <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-[2rem] lg:flex-row justify-around items-center">
+        <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-[2rem] lg:flex-row justify-evenly items-center">
           <Content optionClick={handleOptionClick} pageName={title} />
         </div>
         <div className="w-full h-1/2 bg-[#A1BEE54F]"></div>
@@ -261,9 +261,9 @@ function Content({ optionClick, pageName }) {
       enName: "prescription",
     },
     {
-      name: "دلیل مراجعه",
+      name: "بیمه",
       type: "text",
-      enName: "reason_for_referral",
+      enName: "Insurance",
     },
   ];
 
@@ -295,28 +295,30 @@ function Content({ optionClick, pageName }) {
     doctor: [
       {
         name: "تاریخچه",
-        imageUrl: "dashboard/addTask.png",
-        imageUrlHover: "dashboard/addTaskHover.png",
+        imageUrl: "addTask.png",
+        imageUrlHover: "addTaskHover.png",
       },
       {
         name: "ثبت نسخه",
-        imageUrl: "dashboard/pres.png",
-        imageUrlHover: "dashboard/presHover.png",
+        imageUrl: "pres.png",
+        imageUrlHover: "presHover.png",
       },
       {
         name: "پروفایل",
-        imageUrl: "dashboard/doctor.png",
-        imageUrlHover: "dashboard/doctorHover.png",
+        imageUrl: "doctor.png",
+        imageUrlHover: "doctorHover.png",
       },
     ],
     user: [
       {
         name: "نسخه ها",
-        icon: FaClipboardList,
+        imageUrl: "addTask.png",
+        imageUrlHover: "addTaskHover.png",
       },
       {
         name: "پروفایل",
-        icon: FaUserFriends,
+        imageUrl: "user.png",
+        imageUrlHover: "userHover.png",
       },
     ],
     pharmacy: [
@@ -394,15 +396,31 @@ function Content({ optionClick, pageName }) {
 
   async function WritePrescription() {
     try {
+      var displayText;
+      console.log(inputValues["Insurance"]);
+      switch (inputValues["Insurance"]) {
+        case "insurance1":
+          displayText = "آزاد";
+          break;
+        case "insurance2":
+          displayText = "تامین اجتماعی";
+          break;
+        case "insurance3":
+          displayText = "سلامت";
+          break;
+      }
+      console.log(displayText);
       await fetchData(
         "doctor/prescription",
         "POST",
         {
           meli_code: inputValues["meli_code"],
           prescription: inputValues["prescription"],
+          Insurance: displayText,
         },
         userToken
       );
+      getUserBehavior();
       setPredcriptionDone(true);
       setIsLoading(false);
     } catch (e) {
@@ -531,7 +549,7 @@ function Content({ optionClick, pageName }) {
             user: behave.user.name + behave.user.last_name,
             created_at: behave.created_at,
             prescription: behave.prescription,
-            type: "آزاد",
+            type: behave.Insurance,
           };
         });
       }
@@ -696,6 +714,7 @@ function Content({ optionClick, pageName }) {
                   <thead>
                     <tr>
                       <th className="px-6 py-4 border-b-2"></th>
+                      <th className="px-6 py-4 border-b-2">بیمه</th>
                       <th className="px-6 py-4 border-b-2">کدملی</th>
                       <th className="px-6 py-4 border-b-2">نسخه</th>
                     </tr>
@@ -714,6 +733,17 @@ function Content({ optionClick, pageName }) {
                           />
                         </div>
                       </td>
+                      <td className="px-6 py-4">
+                        <select
+                          onChange={(e) => handleInputChange(e, "Insurance")}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                        >
+                          <option value="insurance1">آزاد</option>
+                          <option value="insurance2">تامین اجتماعی</option>
+                          <option value="insurance3">سلامت</option>
+                        </select>
+                      </td>
+
                       <td className="px-6 py-4">
                         <MainInput
                           theOnChange={(e) => handleInputChange(e, "meli_code")}
