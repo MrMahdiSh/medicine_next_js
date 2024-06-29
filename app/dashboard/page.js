@@ -408,6 +408,9 @@ function Content({ optionClick, pageName }) {
         case "insurance3":
           displayText = "سلامت";
           break;
+        default:
+          displayText = "آزاد";
+          break;
       }
       console.log(displayText);
       await fetchData(
