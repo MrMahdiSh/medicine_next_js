@@ -78,11 +78,7 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
                           .map(([key, cell], cellIndex) => (
                             <td
                               key={cellIndex}
-                              className={`py-4 px-6 ${
-                                rowIndex === rows["data"].length - 1
-                                  ? ""
-                                  : "border-b"
-                              } text-center`}
+                              className={`py-4 px-6 border-b border-black text-center`}
                             >
                               {key === "created_at" || key === "updated_at"
                                 ? formatDate(cell)

@@ -340,7 +340,7 @@ function Content({ optionClick, pageName }) {
   const [UserInfo, setUserInfo] = useState([]);
 
   const columns = {
-    doctor: ["نسخه", "دلیل مراجعه", "تاریخ"],
+    doctor: ["نام کاربری بیمار", "تاریخ مراجعه", "کد نسخه", "نوع بیمه"],
     user: [
       "دکتر",
       "نسخه",
@@ -400,14 +400,15 @@ function Content({ optionClick, pageName }) {
         {
           meli_code: inputValues["meli_code"],
           prescription: inputValues["prescription"],
-          reason_for_referral: inputValues["reason_for_referral"],
         },
         userToken
       );
       setPredcriptionDone(true);
       setIsLoading(false);
     } catch (e) {
-      setIsLoading(true);
+      setIsLoading(false);
+      console.log("herer");
+      console.log(e);
       toast.error("مشکلی پیش آمده");
     }
   }
@@ -527,9 +528,10 @@ function Content({ optionClick, pageName }) {
       if (temperoryUserRole == "doctor") {
         var filteredData = userBehave["hist_details"].map((behave) => {
           return {
-            prescription: behave.prescription,
-            reason_for_referral: behave.reason_for_referral,
+            user: behave.user.name + behave.user.last_name,
             created_at: behave.created_at,
+            prescription: behave.prescription,
+            type: "آزاد",
           };
         });
       }
@@ -655,7 +657,7 @@ function Content({ optionClick, pageName }) {
             <div className="w-3/4 mx-auto ">
               <div className="container mx-auto py-4">
                 <div className="w-full bg-white rounded-3xl shadow-2xl p-10 text-right">
-                  <h1>لطفا شماره تماس بیمار را وارد کنید</h1>
+                  <h1 className="mb-10">لطفا شماره تماس بیمار را وارد کنید</h1>
                   <MainInput
                     type={"number"}
                     theOnChange={(e) => {
