@@ -4,13 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatDate } from "../utils/formatDate";
 import Image from "next/image";
 
-const Table = ({
-  columns,
-  rows,
-  paginated = false,
-  changePage,
-  isNew = false,
-}) => {
+const Table = ({ columns, rows, paginated = false, changePage }) => {
   const tableContainerRef = useRef(null);
 
   useEffect(() => {
