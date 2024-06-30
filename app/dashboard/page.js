@@ -318,7 +318,7 @@ function Content({ optionClick, pageName }) {
     ],
     user: [
       {
-        name: "نسخه ها",
+        name: "تاریخچه",
         imageUrl: "addTask.png",
         imageUrlHover: "addTaskHover.png",
       },
@@ -331,7 +331,8 @@ function Content({ optionClick, pageName }) {
     pharmacy: [
       {
         name: "تاریخچه",
-        icon: FaClipboardList,
+        imageUrl: "addTask.png",
+        imageUrlHover: "addTaskHover.png",
       },
       {
         name: "لیست نسخه ها",
@@ -351,12 +352,11 @@ function Content({ optionClick, pageName }) {
   const columns = {
     doctor: ["نام کاربری بیمار", "تاریخ مراجعه", "کد نسخه", "نوع بیمه"],
     user: [
-      "دکتر",
-      "نسخه",
+      "نام کاربر",
       "تاریخ",
-      "دلیل مراجعه",
-      "داروخانه های تایید شده",
-      "عملگر",
+      "نحوه دریافت دارو",
+      "کدنسخه",
+      "مقدارپرداختی کل",
     ],
     pharmacy: [
       "نام کاربر",
@@ -552,7 +552,7 @@ function Content({ optionClick, pageName }) {
         temperoryUserRole == "doctor"
           ? "doctor/history" + "?page=" + page
           : temperoryUserRole == "user"
-          ? "patient/patient_prescriptions"
+          ? "patient/patientHistory" + "?page=" + page
           : "pharmacy/history" + "?page=" + page,
         "GET",
         null,
@@ -570,32 +570,7 @@ function Content({ optionClick, pageName }) {
         });
       }
 
-      if (temperoryUserRole == "user") {
-        var filteredData = userBehave["prescriptions"].map((behave) => {
-          return {
-            doctor: behave.doctor,
-            prescription: behave.prescription,
-            created_at: behave.created_at,
-            reason_for_referral: behave.reason_for_referral,
-            submited: behave.accepted_count,
-            action: (
-              <button
-                onClick={() => {
-                  setModalIsOpen(true);
-                  fetchPharmacies(behave.id);
-                  setPharmaciesList;
-                }}
-                disabled={!behave.accepted_count >= 1}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                داروخانه ها
-              </button>
-            ),
-          };
-        });
-      }
-
-      if (temperoryUserRole == "pharmacy") {
+      if (temperoryUserRole == "pharmacy" || temperoryUserRole == "user") {
         var filteredData = userBehave["hist_details"]["data"].map((behave) => {
           return {
             user_name: behave.user.name + "" + behave.user.last_name,
@@ -620,7 +595,7 @@ function Content({ optionClick, pageName }) {
                 {behave.type}
               </span>
             ),
-            prescription: behave.prescription_string,
+            prescription: behave.prescription.prescription,
             totla_pay: (
               <div className="flex flex-row-reverse justify-center gap-2">
                 <p style={{ color: "#EE8D20" }}>
