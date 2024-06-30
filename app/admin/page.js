@@ -64,9 +64,15 @@ export default function Dashboard() {
 
   return (
     <div className="h-dvh">
-      <Header title={title} />
+      <Header
+        title={title}
+        changePage={() => {
+          router.push("/admin");
+          setTitle("صفحه اصلی");
+        }}
+      />
       <div className="h-[440px] w-full relative">
-        <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-0 lg:flex-row justify-around items-center">
+        <div className="w-full h-full absolute flex flex-wrap gap-20 mt-20 justify-around items-center">
           <Content optionClick={handleOptionClick} pageName={title} />
         </div>
         <div className="w-full h-1/2 bg-[#A1BEE54F]"></div>
@@ -75,11 +81,13 @@ export default function Dashboard() {
   );
 }
 
-function Header({ title }) {
+function Header({ title, changePage }) {
   return (
-    <div className="h-[200px] bg-white p-10 flex justify-end items-center">
+    <div className="h-[200px] bg-white p-10 mr-10 flex justify-end items-center">
       <div className="flex items-center gap-2">
-        <h1>{title}</h1>
+        <h1 onClick={changePage} className="hover:text-blue-700 cursor-pointer">
+          صفحه اصلی
+        </h1>
         <div style={{ width: "30px", height: "30px" }}>
           <Image
             src={`${ROOT}/dashboard/home.png`}
@@ -865,8 +873,8 @@ function Content({ optionClick, pageName }) {
   }
 
   return (
-    <>
-      {userRole != undefined &&
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-x-4 gap-y-8 w-[70%]">
+      {userRole !== undefined &&
         options.map((option, index) => {
           const isHovered = hoveredOption === option.name;
           const innerShadowStyle = isHovered
@@ -875,18 +883,16 @@ function Content({ optionClick, pageName }) {
 
           return (
             <div
-              className="option-container lg:w-[20%] w-[354.33px]"
+              className="option-container flex flex-col justify-between items-center"
               key={index}
-              onMouseEnter={() => setHoveredOption(option.name)}
-              onMouseLeave={() => setHoveredOption(null)}
-              onClick={() => {
-                optionClick(option.name);
-              }}
             >
               <div
-                className={` h-[354.33px] bg-white rounded-3xl cursor-pointer overflow-hidden shadow-2xl ${
-                  isHovered ? "shadow-none" : ""
-                }`}
+                onMouseEnter={() => setHoveredOption(option.name)}
+                onMouseLeave={() => setHoveredOption(null)}
+                onClick={() => {
+                  optionClick(option.name);
+                }}
+                className="w-[400px] h-[354.33px] bg-white rounded-3xl cursor-pointer overflow-hidden shadow-2xl"
                 style={innerShadowStyle}
               >
                 <div className="h-[70%] flex justify-center items-center">
@@ -901,9 +907,12 @@ function Content({ optionClick, pageName }) {
                   </h1>
                 </div>
               </div>
+              <div className="mt-28">
+                {/* Add any additional content or space below the boxes here */}
+              </div>
             </div>
           );
         })}
-    </>
+    </div>
   );
 }
