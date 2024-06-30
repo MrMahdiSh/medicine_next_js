@@ -20,12 +20,6 @@ import CheckUserLog from "@/utils/auth";
 import Modal from "react-modal";
 
 export default function App() {
-  const searchParams = useSearchParams();
-
-  const prescription = searchParams.get("prescription");
-
-  console.log(prescription);
-
   const [title, setTitle] = useState("دریافت دارو");
 
   function handleOptionClick(name) {
@@ -111,15 +105,137 @@ function Header({ title, changePage }) {
 }
 
 function Content({ optionClick, pageName }) {
+  const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [Address, setAddress] = useState("");
+
+  const searchParams = useSearchParams();
+  const prescription = searchParams.get("prescription");
+
+  const [pharmaciesList, setPharmaciesList] = useState([]);
+  const [activeButton, setActiveButton] = useState({
+    id: null,
+    type: null,
+    row: null,
+  });
+
+  useEffect(() => {
+    async function fetchDataFromServer() {
+      try {
+        const fetchedData = await fetchData(
+          `patient/get_accepted_pharmacy_list?prescription_id=${prescription}`,
+          "GET",
+          null,
+          localStorage.getItem("token")
+        );
+        setPharmaciesList(fetchedData);
+      } catch (e) {
+        if (e.message.includes("405")) {
+          toast.error("شما قبلا داروخانه را انتخاب کردید");
+        }
+        if (e.message.includes("403")) {
+          toast.error("شما اجازه دسترسی به این نسخه رو ندارید");
+        }
+        if (e.message.includes("404")) {
+          toast.error("متاسفانه نسخه پیدا نشد");
+        }
+        router.push("/dashboard");
+      }
+    }
+
+    fetchDataFromServer();
+  }, []);
+
+  const handleTypeChange = (id, newType, row) => {
+    setActiveButton({ id, type: newType, row });
+  };
+
+  const filteredPharmacies = pharmaciesList.map((acceptedPharmacy, index) => {
+    const accepted_pres_id = acceptedPharmacy.id;
+    const isActiveHozori =
+      activeButton.id === accepted_pres_id && activeButton.type === "حضوری";
+    const isActiveUber =
+      activeButton.id === accepted_pres_id && activeButton.type === "پیک";
+
+    return {
+      list: acceptedPharmacy.pharmacy.name,
+      price: acceptedPharmacy.price,
+      transportationPrice:
+        activeButton.type == "حضوری" ? 0 : acceptedPharmacy.transportation_cost,
+      type: (
+        <div className="flex flex-row gap-3 justify-center">
+          <button
+            key={`حضوری-${accepted_pres_id}`}
+            className={`w-28 h-10 bg-white shadow-lg rounded-md gap-2 flex items-center justify-center
+              ${isActiveHozori ? "bg-gray-200 shadow-xl" : ""}
+            `}
+            onClick={() => handleTypeChange(accepted_pres_id, "حضوری", index)}
+          >
+            <Image
+              width={25}
+              height={25}
+              alt="icon"
+              src={"../dashboard/uber.png"}
+              className="mr-1"
+            />
+            <span className={`text-black ${isActiveHozori ? "font-bold" : ""}`}>
+              حضوری
+            </span>
+          </button>
+          <button
+            key={`پیک-${accepted_pres_id}`}
+            className={`w-28 h-10 bg-white shadow-lg rounded-md gap-2 flex items-center justify-center
+              ${isActiveUber ? "bg-gray-200 shadow-xl" : ""}
+            `}
+            onClick={() => handleTypeChange(accepted_pres_id, "پیک", index)}
+          >
+            <Image
+              width={25}
+              height={25}
+              alt="icon"
+              src={"../dashboard/card.png"}
+              className="ml-1"
+            />
+            <span className={`text-black ${isActiveUber ? "font-bold" : ""}`}>
+              پیک
+            </span>
+          </button>
+        </div>
+      ),
+    };
+  });
+
+  async function accept() {
+    setIsLoading(true);
+    try {
+      const data = await fetchData(
+        "patient/buy",
+        "POST",
+        {
+          accepted_prescription_id: activeButton.id,
+          type: activeButton.type,
+          address: Address,
+        },
+        localStorage.getItem("token"),
+        true
+      );
+      toast.success("با موفقیت انجام شد");
+      setIsLoading(false);
+    } catch (e) {
+      setIsLoading(false);
+      toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
+    }
+  }
+
   return (
     <div className="w-full h-[10px] mb-[26rem] relative">
       <div className="w-3/4 mx-auto ">
         <div className="container mx-auto py-4">
           <div className="mt-20">
             <Table
-              rows={[
-                { type: "نحوه دریافت دارو", transportation_cost: "هزینه پیک" },
-              ]}
+              rows={filteredPharmacies}
               columns={[
                 "لیست داروخانه های موردنظر",
                 "هزینه دارو",
@@ -128,6 +244,91 @@ function Content({ optionClick, pageName }) {
               ]}
               paginated={false}
             />
+
+            {activeButton.id != null && (
+              <>
+                <div className="text-center mt-20">
+                  {activeButton.type == "پیک" && (
+                    <>
+                      <h1 className="text-xl font-bold mb-6">
+                        آدرس دقیق خود را وارد کنید
+                      </h1>
+
+                      <div className="w-full mx-auto rounded-lg p-4">
+                        <textarea
+                          onChange={(e) => {
+                            setAddress(e.target.value);
+                          }}
+                          className="w-full h-32 px-3 py-2 text-sm placeholder-gray-400 border border-gray-400 rounded-2xl focus:outline-none focus:border-blue-500"
+                          style={{
+                            direction: "rtl",
+                            fontSize: "15px",
+                            padding: "20px",
+                          }}
+                          placeholder="آدرس خود را وارد کنید"
+                        ></textarea>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="mt-6 text-center w-1/2 mx-auto">
+                    <div className="flex py-4 justify-between">
+                      <div className="flex flex-row-reverse gap-1">
+                        <p className="text-left font-bold">
+                          {filteredPharmacies[activeButton.row]["price"]}
+                        </p>
+                        <span>تومان</span>
+                      </div>
+                      <p className="text-right">:هزینه دارو</p>
+                    </div>
+                    <hr className="border-gray-400 mb-2" />
+                    <div className="flex py-4 justify-between">
+                      <div className="flex flex-row-reverse gap-1">
+                        <p className="text-left font-bold">
+                          {
+                            filteredPharmacies[activeButton.row][
+                              "transportationPrice"
+                            ]
+                          }
+                        </p>
+                        <span>تومان</span>
+                      </div>
+                      <p className="text-right">:هزینه پیک</p>
+                    </div>
+                    <hr className="border-gray-400 mb-2" />
+                    <div className="flex py-4 justify-between">
+                      <div className="flex flex-row-reverse gap-1">
+                        <p className="text-left font-bold">
+                          {activeButton.type == "حضوری"
+                            ? filteredPharmacies[activeButton.row]["price"]
+                            : parseFloat(
+                                filteredPharmacies[activeButton.row]["price"]
+                              ) +
+                              parseFloat(
+                                filteredPharmacies[activeButton.row][
+                                  "transportationPrice"
+                                ]
+                              )}
+                        </p>
+                        <span>تومان</span>
+                      </div>
+                      <p className="text-right">:هزینه کل</p>
+                    </div>
+                  </div>
+                  <div className="mt-6 mx-auto text-center">
+                    <MainButton
+                      isLoading={isLoading}
+                      text={
+                        activeButton.type == "حضوری" ? "ثبت" : "ثبت و پرداخت"
+                      }
+                      onclick={() => {
+                        accept();
+                      }}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
