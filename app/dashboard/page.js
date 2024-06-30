@@ -358,7 +358,13 @@ function Content({ optionClick, pageName }) {
       "داروخانه های تایید شده",
       "عملگر",
     ],
-    pharmacy: ["نسخه", "تاریخ", "وضعیت"],
+    pharmacy: [
+      "نام کاربر",
+      "تاریخ",
+      "نحوه دریافت دارو",
+      "کدنسخه",
+      "مقدارپرداختی کل",
+    ],
   };
 
   const [rows, setRows] = useState([]);
@@ -547,7 +553,7 @@ function Content({ optionClick, pageName }) {
           ? "doctor/history" + "?page=" + page
           : temperoryUserRole == "user"
           ? "patient/patient_prescriptions"
-          : "pharmacy/history",
+          : "pharmacy/history" + "?page=" + page,
         "GET",
         null,
         localStorage.getItem("token")
@@ -590,16 +596,42 @@ function Content({ optionClick, pageName }) {
       }
 
       if (temperoryUserRole == "pharmacy") {
-        var filteredData = userBehave["prescriptions"].map((behave) => {
+        var filteredData = userBehave["hist_details"]["data"].map((behave) => {
           return {
+            user_name: behave.user.name + "" + behave.user.last_name,
+            created_at: behave.prescription.created_at,
+            type: behave.type && (
+              <span className="flex flex-row-reverse justify-center gap-2">
+                {behave.type === "حضوری" ? (
+                  <Image
+                    width={25}
+                    height={25}
+                    alt="icon"
+                    src={"../dashboard/card.png"}
+                  />
+                ) : (
+                  <Image
+                    width={25}
+                    height={25}
+                    alt="icon"
+                    src={"../dashboard/uber.png"}
+                  />
+                )}
+                {behave.type}
+              </span>
+            ),
             prescription: behave.prescription_string,
-            created_at: behave.created_at,
-            status:
-              behave.status == "pending"
-                ? "درانتظار"
-                : behave.status == "accepted"
-                ? "تایید کاربر"
-                : "نامشخص",
+            totla_pay: (
+              <div className="flex flex-row-reverse justify-center gap-2">
+                <p style={{ color: "#EE8D20" }}>
+                  {behave.type == "حضوری"
+                    ? parseInt(behave.price)
+                    : parseInt(behave.price) +
+                      parseInt(behave.transportation_cost)}
+                </p>
+                <span style={{ color: "black" }}> تومان</span>
+              </div>
+            ),
           };
         });
       }
@@ -657,6 +689,9 @@ function Content({ optionClick, pageName }) {
         "POST",
         {
           prescription_id: id,
+          price: pharmacyAcceptPresExtraInfo["price"],
+          not_awailable_medicines:
+            pharmacyAcceptPresExtraInfo["notAwailablePres"],
         },
         localStorage.getItem("token"),
         true
@@ -666,6 +701,11 @@ function Content({ optionClick, pageName }) {
       getPres();
     } catch (error) {}
   }
+
+  const pharmacyAcceptPresExtraInfo = {
+    price: "",
+    notAwailablePres: "",
+  };
 
   if (pageName == "تایید نسخه") {
     return (
@@ -684,9 +724,23 @@ function Content({ optionClick, pageName }) {
                 {
                   prescription: selectedPres["prescription"],
                   meli_code: selectedPres["user"]["meli_code"],
-                  price: <MainInput type={"number"} placeholder={"قیمت"} />,
+                  price: (
+                    <MainInput
+                      theOnChange={(e) => {
+                        pharmacyAcceptPresExtraInfo["price"] = e.target.value;
+                      }}
+                      type={"number"}
+                      placeholder={"قیمت"}
+                    />
+                  ),
                   notAvailable: (
-                    <MainInput placeholder={"دارو هایی که موجود نیست"} />
+                    <MainInput
+                      theOnChange={(e) => {
+                        pharmacyAcceptPresExtraInfo["notAwailablePres"] =
+                          e.target.value;
+                      }}
+                      placeholder={"دارو هایی که موجود نیست"}
+                    />
                   ),
                   action: (
                     <div className="w-full h-full flex justify-center items-center">

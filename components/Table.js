@@ -54,8 +54,8 @@ const Table = ({
               </tr>
             </thead>
             <tbody>
-              {paginated === false
-                ? rows.length > 0 &&
+              {paginated === false ? (
+                rows.length > 0 ? (
                   [...rows].reverse().map((row, rowIndex) => (
                     <tr key={rowIndex}>
                       {Object.entries(row)
@@ -76,24 +76,43 @@ const Table = ({
                         ))}
                     </tr>
                   ))
-                : rows["data"] &&
-                  rows["data"].length > 0 &&
-                  [...rows["data"]].reverse().map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      {Object.entries(row)
-                        .reverse()
-                        .map(([key, cell], cellIndex) => (
-                          <td
-                            key={cellIndex}
-                            className={`py-4 px-6 border-b border-[#525252] text-center`}
-                          >
-                            {key === "created_at" || key === "updated_at"
-                              ? formatDate(cell)
-                              : cell}
-                          </td>
-                        ))}
-                    </tr>
-                  ))}
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={columns.length}
+                      className="py-20 px-6 text-center"
+                    >
+                      متاسفانه چیزی برای نمایش وجود ندارد
+                    </td>
+                  </tr>
+                )
+              ) : rows["data"] && rows["data"].length > 0 ? (
+                [...rows["data"]].reverse().map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {Object.entries(row)
+                      .reverse()
+                      .map(([key, cell], cellIndex) => (
+                        <td
+                          key={cellIndex}
+                          className={`py-4 px-6 border-b border-[#525252] text-center`}
+                        >
+                          {key === "created_at" || key === "updated_at"
+                            ? formatDate(cell)
+                            : cell}
+                        </td>
+                      ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    className="py-20 px-6 text-center mt-10"
+                  >
+                    متاسفانه چیزی برای نمایش وجود ندارد
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
           {paginated && rows["data"] && (
