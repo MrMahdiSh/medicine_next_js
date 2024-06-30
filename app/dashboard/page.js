@@ -575,7 +575,7 @@ function Content({ optionClick, pageName }) {
           return {
             user_name: behave.user.name + "" + behave.user.last_name,
             created_at: behave.prescription.created_at,
-            type: behave.type && (
+            type: behave.type ? (
               <span className="flex flex-row-reverse justify-center gap-2">
                 {behave.type === "حضوری" ? (
                   <Image
@@ -594,18 +594,15 @@ function Content({ optionClick, pageName }) {
                 )}
                 {behave.type}
               </span>
-            ),
+            ):(<p>هنوز انتخاب نشده</p>),
             prescription: behave.prescription.prescription,
-            totla_pay: (
-              <div className="flex flex-row-reverse justify-center gap-2">
-                <p style={{ color: "#EE8D20" }}>
-                  {behave.type == "حضوری"
-                    ? parseInt(behave.price)
-                    : parseInt(behave.price) +
-                      parseInt(behave.transportation_cost)}
-                </p>
+            totla_pay: behave.transaction ? (
+              <div className="flex flex-row-reverse justify-center gap-1">
                 <span style={{ color: "black" }}> تومان</span>
+                <p style={{ color: "#EE8D20" }}>{behave.transaction.value}</p>
               </div>
+            ) : (
+              "پرداخت نشده"
             ),
           };
         });

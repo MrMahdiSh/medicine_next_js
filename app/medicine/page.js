@@ -68,7 +68,7 @@ export default function App() {
       <Header
         title={title}
         changePage={() => {
-          setTitle("صفحه اصلی");
+          router.push("/dashboard");
         }}
       />
       <div className="h-[440px] w-full relative">
@@ -113,6 +113,8 @@ function Content({ optionClick, pageName }) {
 
   const searchParams = useSearchParams();
   const prescription = searchParams.get("prescription");
+
+  const [isSucces, setIsSucces] = useState(false);
 
   const [pharmaciesList, setPharmaciesList] = useState([]);
   const [activeButton, setActiveButton] = useState({
@@ -221,8 +223,10 @@ function Content({ optionClick, pageName }) {
         localStorage.getItem("token"),
         true
       );
+
       toast.success("با موفقیت انجام شد");
       setIsLoading(false);
+      setIsSucces(true);
     } catch (e) {
       setIsLoading(false);
       toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
@@ -234,18 +238,20 @@ function Content({ optionClick, pageName }) {
       <div className="w-3/4 mx-auto ">
         <div className="container mx-auto py-4">
           <div className="mt-20">
-            <Table
-              rows={filteredPharmacies}
-              columns={[
-                "لیست داروخانه های موردنظر",
-                "هزینه دارو",
-                "هزینه پیک",
-                "نحوه دریافت",
-              ]}
-              paginated={false}
-            />
+            {isSucces != true && (
+              <Table
+                rows={filteredPharmacies}
+                columns={[
+                  "لیست داروخانه های موردنظر",
+                  "هزینه دارو",
+                  "هزینه پیک",
+                  "نحوه دریافت",
+                ]}
+                paginated={false}
+              />
+            )}
 
-            {activeButton.id != null && (
+            {isSucces != true && activeButton.id != null && (
               <>
                 <div className="text-center mt-20">
                   {activeButton.type == "پیک" && (
@@ -325,6 +331,36 @@ function Content({ optionClick, pageName }) {
                         accept();
                       }}
                     />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {isSucces == true && (
+              <>
+                <div className="w-full p-10 bg-white rounded-2xl">
+                  <div className="w-[70%] mx-auto">
+                    <Image
+                      className="mx-auto"
+                      width={67}
+                      height={67}
+                      alt="success"
+                      src={"../dashboard/success.png"}
+                    ></Image>
+
+                    <h1 className="mt-8 mx-auto text-center text-xl font-bold">
+                      درخواست شما با موفقیت انجام شد
+                    </h1>
+                    <div className="flex mx-auto flex-row-reverse gap-5 justify-center items-center mt-10">
+                      <p>:آدرس داروخانه مورد نظر</p>
+                      <p>
+                        {
+                          pharmaciesList[activeButton.row]["pharmacy"][
+                            "address"
+                          ]
+                        }
+                      </p>
+                    </div>
                   </div>
                 </div>
               </>
