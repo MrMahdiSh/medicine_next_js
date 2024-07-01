@@ -148,6 +148,7 @@ function Content({ optionClick, pageName }) {
     setUserToken(localStorage.getItem("token"));
     fetchDoctors();
     fetchPatients();
+    fetchTransactions();
     fetchPharmacy();
   }, []);
 
@@ -202,12 +203,12 @@ function Content({ optionClick, pageName }) {
 
   const columns = {
     "لیست پرداختی ها": [
-      "نام کاربر",
-      "نام خانوادگی کاربر",
-      "مقدار",
       "نام داروخانه",
-      "نام پزشک",
-      "تاریخ",
+      "نام کاربر",
+      "نحوه دریافت دارو",
+      "مقدار پرداختی داروخانه",
+      "مقدار پرداختی پیک",
+      "مقدار پرداختی کل",
     ],
     "لیست کاربران": ["نام", "نام خانوادگی", " "],
     "لیست داروخانه ها": ["نام داروخانه", "آدرس", " "],
@@ -257,6 +258,67 @@ function Content({ optionClick, pageName }) {
       data: doctorFilter,
       current_page: getDoctors["current_page"],
       total: getDoctors["last_page"],
+    });
+  }
+
+  async function fetchTransactions(page = 1) {
+    const getTransActions = await fetchData(
+      "Admin/transactions?page=" + page,
+      "GET",
+      null,
+      localStorage.getItem("token")
+    );
+
+    const transactionsFilter = getTransActions["data"].map((transaction) => {
+      return {
+        pharmacyName: transaction.pharmacy.name,
+        patient_name: transaction.user.name + " " + transaction.user.last_name,
+        type: (
+          <span className="flex flex-row justify-center gap-2">
+            {transaction.accepted_pres.type === "حضوری" ? (
+              <Image
+                width={25}
+                height={25}
+                alt="icon"
+                src={"../dashboard/card.png"}
+              />
+            ) : (
+              <Image
+                width={25}
+                height={25}
+                alt="icon"
+                src={"../dashboard/uber.png"}
+              />
+            )}
+            {transaction.accepted_pres.type}
+          </span>
+        ),
+        medicinePrice: (
+          <p className="text-[#636363]">
+            {parseInt(transaction.value) -
+              parseInt(transaction.transportation_cost)}
+            <span className="text-[#636363]">تومان</span>
+          </p>
+        ),
+        transportationCost: (
+          <p className="text-[#636363]">
+            {transaction.transportation_cost}
+            <span className="text-[#636363]">تومان</span>
+          </p>
+        ),
+        totalPrice: (
+          <p className="text-[#EE8D20]">
+            {transaction.value}
+            <span className="text-[#636363]">تومان</span>
+          </p>
+        ),
+      };
+    });
+
+    setTransactions({
+      data: transactionsFilter,
+      current_page: getTransActions["current_page"],
+      total: getTransActions["last_page"],
     });
   }
 
@@ -909,7 +971,9 @@ function Content({ optionClick, pageName }) {
                     ? Pharmacy
                     : pageName == "لیست کاربران"
                     ? Patients
-                    : pageName == "لیست پرداختی ها" ?? transactions
+                    : pageName == "لیست پرداختی ها"
+                    ? transactions
+                    : ""
                 }
               />
             }
