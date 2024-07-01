@@ -308,19 +308,34 @@ function Content({ optionClick, pageName }) {
             theFIlter.prescription.user.name +
             " " +
             theFIlter.prescription.user.last_name,
-          doctor_name:
-            theFIlter.prescription.doctor_details.name +
-            " " +
-            theFIlter.prescription.doctor_details.last_name,
+          created_at: theFIlter.prescription.created_at,
+          type: (
+            <span className="flex flex-row justify-center gap-2">
+              {theFIlter.type === "حضوری" ? (
+                <Image
+                  width={25}
+                  height={25}
+                  alt="icon"
+                  src={"../dashboard/card.png"}
+                />
+              ) : (
+                <Image
+                  width={25}
+                  height={25}
+                  alt="icon"
+                  src={"../dashboard/uber.png"}
+                />
+              )}
+              {theFIlter.type}
+            </span>
+          ),
           prescription: theFIlter.prescription.prescription,
-          reason_for_referral: theFIlter.prescription.reason_for_referral,
-          status:
-            theFIlter.status === "pending"
-              ? "در انتظار"
-              : theFIlter.status === "accepted"
-              ? "تایید شده"
-              : theFIlter.status,
-          created_at: theFIlter.created_at,
+          price: (
+            <p className="text-[#EE8D20]">
+              {theFIlter.transaction.value}{" "}
+              <span className="text-[#636363]">تومان</span>
+            </p>
+          ),
         };
       });
       setIsModalPaginate(true);
@@ -345,12 +360,12 @@ function Content({ optionClick, pageName }) {
         name: pharm["name"],
         address: pharm["address"],
         action: (
-          <div>
+          <div className="flex flex-col space-y-2 w-[160px] mx-auto">
             <button
               onClick={() => {
                 pharmacyProfileClick(pharm.id);
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
               پروفایل
             </button>
@@ -358,7 +373,7 @@ function Content({ optionClick, pageName }) {
               onClick={() => {
                 pharmacyHistoryClick(pharm.id, paginationInfo[modalTitle]);
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-5"
+              className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
               گزارشات
             </button>
@@ -553,12 +568,11 @@ function Content({ optionClick, pageName }) {
       "تاریخ عضویت",
     ],
     "گزارشات داروخانه": [
-      "نام بیمار",
-      "نام دکتر",
-      "نسخه",
-      "دلیل مراجعه",
-      "وضعیت",
-      "تاریخ",
+      "نام کاربر",
+      "تاریخ مراجعه",
+      "نحوه دریافت",
+      "کدنسخه",
+      "مقدار پرداختی کل",
     ],
     "پروفایل کاربر": ["نام", "نام خانوادگی", "شماره", "کدملی", "تاریخ عضویت"],
     "گزارشات کاربر": ["نام دکتر", "نسخه", "دلیل مراجعه", "وضعیت", "تاریخ"],
