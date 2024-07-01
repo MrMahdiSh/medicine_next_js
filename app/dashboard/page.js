@@ -336,11 +336,13 @@ function Content({ optionClick, pageName }) {
       },
       {
         name: "لیست نسخه ها",
-        icon: FaClinicMedical,
+        imageUrl: "pharmacy.png",
+        imageUrlHover: "pharmacyHover.png",
       },
       {
         name: "پروفایل",
-        icon: FaUserFriends,
+        imageUrl: "pres.png",
+        imageUrlHover: "presHover.png",
       },
     ],
   };
@@ -594,7 +596,9 @@ function Content({ optionClick, pageName }) {
                 )}
                 {behave.type}
               </span>
-            ):(<p>هنوز انتخاب نشده</p>),
+            ) : (
+              <p>هنوز انتخاب نشده</p>
+            ),
             prescription: behave.prescription.prescription,
             totla_pay: behave.transaction ? (
               <div className="flex flex-row-reverse justify-center gap-1">
