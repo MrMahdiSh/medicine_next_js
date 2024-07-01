@@ -302,7 +302,6 @@ function Content({ optionClick, pageName }) {
         localStorage.getItem("token")
       );
       const filter = docy["data"].map((theFIlter) => {
-        console.log(theFIlter.prescription.doctor_details);
         return {
           patient_name:
             theFIlter.prescription.user.name +
@@ -371,7 +370,7 @@ function Content({ optionClick, pageName }) {
             </button>
             <button
               onClick={() => {
-                pharmacyHistoryClick(pharm.id, paginationInfo[modalTitle]);
+                pharmacyHistoryClick(pharm.user_id, paginationInfo[modalTitle]);
               }}
               className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
@@ -427,19 +426,38 @@ function Content({ optionClick, pageName }) {
       );
       const patientPresListFilter = docy["data"].map((patientPres) => {
         return {
-          doctor_name:
-            patientPres.doctor_details.name +
+          patient_name:
+            patientPres.prescription.user.name +
             " " +
-            patientPres.doctor_details.last_name,
-          prescription: patientPres.prescription,
-          reason_for_referral: patientPres.reason_for_referral,
-          status:
-            patientPres.status === "pending"
-              ? "در انتظار"
-              : patientPres.status === "accepted"
-              ? "تایید شده"
-              : patientPres.status,
-          created_at: patientPres.created_at,
+            patientPres.prescription.user.last_name,
+          created_at: patientPres.prescription.created_at,
+          type: (
+            <span className="flex flex-row justify-center gap-2">
+              {patientPres.type === "حضوری" ? (
+                <Image
+                  width={25}
+                  height={25}
+                  alt="icon"
+                  src={"../dashboard/card.png"}
+                />
+              ) : (
+                <Image
+                  width={25}
+                  height={25}
+                  alt="icon"
+                  src={"../dashboard/uber.png"}
+                />
+              )}
+              {patientPres.type}
+            </span>
+          ),
+          prescription: patientPres.prescription.prescription,
+          price: (
+            <p className="text-[#EE8D20]">
+              {patientPres.transaction.value}{" "}
+              <span className="text-[#636363]">تومان</span>
+            </p>
+          ),
         };
       });
       setIsModalPaginate(true);
@@ -464,12 +482,12 @@ function Content({ optionClick, pageName }) {
         name: theUser.user.name,
         last_name: theUser.user.last_name,
         action: (
-          <div>
+          <div className="flex flex-col space-y-2 w-[160px] mx-auto">
             <button
               onClick={() => {
                 userProfileClick(theUser.user_id);
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
               پروفایل
             </button>
@@ -477,7 +495,7 @@ function Content({ optionClick, pageName }) {
               onClick={() => {
                 userHistoryClick(theUser.user_id);
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-5"
+              className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
               گزارشات
             </button>
