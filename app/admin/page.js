@@ -40,7 +40,11 @@ export default function Dashboard() {
 
       localStorage.setItem("user_details", JSON.stringify(data));
 
-      setUserValid(true);
+      if (data.role[0] == "admin") {
+        setUserValid(true);
+      } else {
+        setUserValid(false);
+      }
     } catch (error) {
       setUserValid(false);
     }
@@ -71,7 +75,12 @@ export default function Dashboard() {
           setTitle("صفحه اصلی");
         }}
       />
+
       <div className="h-[440px] w-full relative">
+        <h1 className="text-center text-2xl absolute w-full font-bold mt-16">
+          {title == "صفحه اصلی" ? "" : title}
+        </h1>
+
         <div className="w-full h-full absolute flex flex-wrap gap-20 mt-20 justify-around items-center">
           <Content optionClick={handleOptionClick} pageName={title} />
         </div>
@@ -146,20 +155,25 @@ function Content({ optionClick, pageName }) {
 
   const options = [
     {
-      name: "لیست پرداختی ها",
-      icon: FaDollarSign,
-    },
-    {
-      name: "لیست کاربران",
-      icon: FaRegUser,
-    },
-    {
       name: "لیست داروخانه ها",
-      icon: FaBookMedical,
+      imageUrl: "pharmacy.png",
+      imageUrlHover: "pharmacyHover.png",
     },
     {
       name: "لیست پزشکان",
-      icon: FaSyringe,
+      imageUrl: "doctorGroup.png",
+      imageUrlHover: "doctorGroupHover.png",
+    },
+
+    {
+      name: "لیست پرداختی ها",
+      imageUrl: "cash.png",
+      imageUrlHover: "cashHover.png",
+    },
+    {
+      name: "لیست کاربران",
+      imageUrl: "user.png",
+      imageUrlHover: "userHover.png",
     },
   ];
 
@@ -195,9 +209,9 @@ function Content({ optionClick, pageName }) {
       "نام پزشک",
       "تاریخ",
     ],
-    "لیست کاربران": ["نام", "نام خانوادگی", "عملگر"],
-    "لیست داروخانه ها": ["نام داروخانه", "آدرس", "عملگر"],
-    "لیست پزشکان": ["نام", "نام خانوادگی", "تخصص", "عملگر"],
+    "لیست کاربران": ["نام", "نام خانوادگی", " "],
+    "لیست داروخانه ها": ["نام داروخانه", "آدرس", " "],
+    "لیست پزشکان": ["نام پزشک", "تخصص", " "],
   };
 
   const [modalRows, setModalRows] = useState([]);
@@ -214,16 +228,15 @@ function Content({ optionClick, pageName }) {
 
     const doctorFilter = getDoctors["data"].map((doctor) => {
       return {
-        name: doctor.user.name,
-        last_name: doctor.user.last_name,
+        name: doctor.user.name + "" + doctor.user.last_name,
         expert: doctor.expertise,
         action: (
-          <div>
+          <div className="flex flex-col space-y-2 w-[160px] mx-auto">
             <button
               onClick={() => {
                 doctorProfileClick(doctor.id);
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
               پروفایل
             </button>
@@ -231,7 +244,7 @@ function Content({ optionClick, pageName }) {
               onClick={() => {
                 doctorHistoryClick(doctor.user_id);
               }}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-5"
+              className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
               گزارشات
             </button>
@@ -504,8 +517,10 @@ function Content({ optionClick, pageName }) {
       );
       const doctorFilter = docy["data"].map((doctor) => {
         return {
-          name: doctor.prescription,
-          reason_for_referral: doctor.reason_for_referral,
+          name: doctor.user.name + " " + doctor.user.last_name,
+          created_at: doctor.created_at,
+          prescription: doctor.prescription,
+          type: doctor.Insurance,
         };
       });
       setIsModalPaginate(true);
@@ -526,7 +541,7 @@ function Content({ optionClick, pageName }) {
       "شماره",
       "تاریخ عضویت",
     ],
-    "گزارشات دکتر": ["نسخه", "دلیل مراجعه"],
+    "گزارشات دکتر": ["نام کاربری بیمار", "تاریخ مراجعه", "کد نسخه", "نوع بیمه"],
     "پروفایل داروخانه": [
       "نام داروخانه",
       "نام پزشک داروساز",
@@ -873,13 +888,16 @@ function Content({ optionClick, pageName }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-x-4 gap-y-8 w-[70%]">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-4 gap-y-8 w-[70%]">
       {userRole !== undefined &&
         options.map((option, index) => {
           const isHovered = hoveredOption === option.name;
           const innerShadowStyle = isHovered
             ? { boxShadow: "inset 0 0 30px rgba(0, 0, 0, 0.2)" }
             : {};
+          const innerShadowStyleText = isHovered
+            ? { boxShadow: "inset 0 0 30px rgba(0, 0, 0, 0.1)" }
+            : { boxShadow: "rgba(17, 12, 46, 0.15) 0px 0px 50px 0px" };
 
           return (
             <div
@@ -892,19 +910,47 @@ function Content({ optionClick, pageName }) {
                 onClick={() => {
                   optionClick(option.name);
                 }}
-                className="w-[400px] h-[354.33px] bg-white rounded-3xl cursor-pointer overflow-hidden shadow-2xl"
+                className="w-[400px] h-[354.33px] bg-white rounded-[50px] cursor-pointer overflow-hidden shadow-2xl"
                 style={innerShadowStyle}
               >
                 <div className="h-[70%] flex justify-center items-center">
-                  <option.icon
-                    size={100}
-                    style={{ color: isHovered ? "#EE8D20" : "" }}
-                  />
+                  {option.icon ? (
+                    <option.icon
+                      size={120}
+                      style={{ color: isHovered ? "#EE8D20" : "" }}
+                    />
+                  ) : isHovered ? (
+                    <div className="w-[70%] h-[70%] relative">
+                      <Image
+                        src={"../dashboard/" + option.imageUrlHover}
+                        alt={option.name}
+                        layout="fill"
+                        objectFit="contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-[70%] h-[70%] relative">
+                      <Image
+                        src={"../dashboard/" + option.imageUrl}
+                        alt={option.name}
+                        layout="fill"
+                        objectFit="contain"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="h-[30%] flex justify-center items-center">
-                  <h1 style={{ color: isHovered ? "#EE8D20" : "" }}>
-                    {option.name}
-                  </h1>
+                  <div
+                    style={innerShadowStyleText}
+                    className="w-[70%] h-[50%] rounded-2xl mx-auto flex justify-center items-center"
+                  >
+                    <h1
+                      className="font-bold text-lg"
+                      style={{ color: isHovered ? "#EE8D20" : "#343434" }}
+                    >
+                      {option.name}
+                    </h1>
+                  </div>
                 </div>
               </div>
               <div className="mt-28">
