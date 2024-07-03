@@ -391,6 +391,23 @@ function Content({ optionClick, pageName }) {
             </span>
           ),
           prescription: theFIlter.prescription.prescription,
+          medicinePrice: (
+            <p className="text-[#636363]">
+              {theFIlter.type == "حضوری"
+                ? theFIlter.transaction.value
+                : parseFloat(theFIlter.transaction.value) -
+                  parseFloat(theFIlter.transaction.transportation_cost)}
+              <span className="text-[#636363]">تومان</span>
+            </p>
+          ),
+          transactionsPrice: (
+            <p className="text-[#636363]">
+              {theFIlter.type == "حضوری"
+                ? "0"
+                : theFIlter.transaction.transportation_cost}
+              <span className="text-[#636363]">تومان</span>
+            </p>
+          ),
           price: (
             <p className="text-[#EE8D20]">
               {theFIlter.transaction.value}{" "}
@@ -652,6 +669,8 @@ function Content({ optionClick, pageName }) {
       "تاریخ مراجعه",
       "نحوه دریافت",
       "کدنسخه",
+      "هزینه دارو",
+      "هزینه پیک",
       "مقدار پرداختی کل",
     ],
     "پروفایل کاربر": ["نام", "نام خانوادگی", "شماره", "کدملی", "تاریخ عضویت"],

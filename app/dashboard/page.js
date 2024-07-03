@@ -341,8 +341,8 @@ function Content({ optionClick, pageName }) {
       },
       {
         name: "پروفایل",
-        imageUrl: "pres.png",
-        imageUrlHover: "presHover.png",
+        imageUrl: "user.png",
+        imageUrlHover: "userHover.png",
       },
     ],
   };
@@ -412,7 +412,6 @@ function Content({ optionClick, pageName }) {
   async function WritePrescription() {
     try {
       var displayText;
-      console.log(inputValues["Insurance"]);
       switch (inputValues["Insurance"]) {
         case "insurance1":
           displayText = "آزاد";
@@ -427,8 +426,7 @@ function Content({ optionClick, pageName }) {
           displayText = "آزاد";
           break;
       }
-      console.log(displayText);
-      await fetchData(
+      const data = await fetchData(
         "doctor/prescription",
         "POST",
         {
@@ -437,6 +435,10 @@ function Content({ optionClick, pageName }) {
           Insurance: displayText,
         },
         userToken
+      );
+      toast.success(
+        "http://drug.taminuranus.com/medicine/medicine/?prescription=" +
+          data[1]["id"]
       );
       getUserBehavior();
       setPredcriptionDone(true);
