@@ -609,6 +609,7 @@ function Content({ optionClick, pageName }) {
         meli_code: docy.user.meli_code,
         instagram: docy.instagram,
         phone: docy.user.phone,
+        expertise: docy.expertise,
         created_at: docy.created_at,
       };
 
@@ -651,6 +652,7 @@ function Content({ optionClick, pageName }) {
       "کدملی",
       "اینستاگرام",
       "شماره",
+      "تخصص",
       "تاریخ عضویت",
     ],
     "گزارشات دکتر": ["نام کاربری بیمار", "تاریخ مراجعه", "کد نسخه", "نوع بیمه"],
