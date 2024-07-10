@@ -13,11 +13,11 @@ import ROOT from "@/utils/ROOT";
 export default function App() {
   return (
     <div
-      className="flex items-center justify-center w-screen h-screen bg-cover bg-center"
+      className="w-screen min-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${ROOT}/index/bg.jfif)` }}
     >
-      <div className="w-full h-full bg-[#33629F4D] p-0 sm:p-20 backdrop-blur-md">
-        <div className="h-full w-full lg:w-1/2 lg:mx-auto bg-[#E0EBF9A6] sm:rounded-lg p-10">
+      <div className="w-full h-screen min-h-[700px] bg-[#33629F4D] p-0 sm:p-20 backdrop-blur-md">
+        <div className="w-full h-full lg:w-1/2 lg:mx-auto bg-[#E0EBF9A6] sm:rounded-lg p-10">
           <Content />
         </div>
       </div>
@@ -160,7 +160,8 @@ function Content() {
       setIsRegister(true);
       setTitle("کد تایید");
     } catch (e) {
-      toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
+      setTitle("ورود");
+      toast.error("با این کدملی یا شماره تماس قبلا عضو شدید لطفا وارد شوید");
     }
   }
 
