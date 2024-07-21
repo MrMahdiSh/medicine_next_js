@@ -758,6 +758,12 @@ function Content({ optionClick, pageName }) {
         enName: "last_name",
       },
       {
+        name: "کدملی دکتر",
+        type: "number",
+        editable: true,
+        enName: "meli_code",
+      },
+      {
         name: "آدرس اینستاگرام",
         type: "text",
         editable: true,
@@ -847,6 +853,10 @@ function Content({ optionClick, pageName }) {
       );
       toast.success("با موفقیت انجام شد");
       setModalIsOpen(false);
+      fetchDoctors();
+      fetchPatients();
+      fetchTransactions();
+      fetchPharmacy();
       setNewModalIsOpen(false);
     } catch (e) {
       toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");

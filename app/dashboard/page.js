@@ -183,6 +183,12 @@ const userInfo = {
       enName: "last_name",
     },
     {
+      name: "کدملی پزشک",
+      type: "text",
+      editable: false,
+      enName: "meli_code",
+    },
+    {
       name: "آدرس اینستاگرام",
       type: "text",
       editable: true,
@@ -240,6 +246,8 @@ function Content({ optionClick, pageName }) {
 
   const [pharmacyPresList, setPharmacyPresList] = useState([]);
 
+  const notificationSound = new Audio("/sound/notif.mp3");
+
   const [buyDetails, setBuyDetails] = useState({
     id: undefined,
     address: undefined,
@@ -282,6 +290,7 @@ function Content({ optionClick, pageName }) {
   );
 
   const router = useRouter();
+  const [firstPresCount, setFirstPresCount] = useState(0);
 
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
@@ -653,6 +662,16 @@ function Content({ optionClick, pageName }) {
           ),
         };
       });
+
+      if (
+        pres["prescriptions"].length > 0 &&
+        pres["prescriptions"].length > firstPresCount
+      ) {
+        toast.info("یک نسخه جدید موجود شد");
+        notificationSound.play();
+        setFirstPresCount(pres["prescriptions"].length);
+      }
+
       setPharmacyPresList(filtered);
     } catch (error) {
       console.log(error);
