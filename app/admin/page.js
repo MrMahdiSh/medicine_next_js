@@ -832,6 +832,10 @@ function Content({ optionClick, pageName }) {
 
       userDetails["role"] = role;
 
+      if (role == "pharmacy") {
+        userDetails["pharmacy_name"] = userDetails["name"];
+      }
+
       userDetails["status"] = "active";
 
       await fetchData(
