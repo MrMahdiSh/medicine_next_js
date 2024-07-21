@@ -248,6 +248,8 @@ function Content({ optionClick, pageName }) {
 
   const notificationSound = new Audio("/sound/notif.mp3");
 
+  const [firstPresCount, setFirstPresCount] = useState(0);
+
   const [buyDetails, setBuyDetails] = useState({
     id: undefined,
     address: undefined,
@@ -290,7 +292,6 @@ function Content({ optionClick, pageName }) {
   );
 
   const router = useRouter();
-  const [firstPresCount, setFirstPresCount] = useState(0);
 
   useEffect(() => {
     setRole(localStorage.getItem("user_role"));
@@ -299,7 +300,7 @@ function Content({ optionClick, pageName }) {
     setUserToken(localStorage.getItem("token"));
     history_count();
     if (localStorage.getItem("user_role") == "pharmacy") {
-      getPres();
+      getPres(true);
       setInterval(getPres, 20000);
       setInterval(getUserBehavior, 20000);
     }
@@ -633,7 +634,7 @@ function Content({ optionClick, pageName }) {
 
   const [selectedPres, setSelectedPres] = useState([]);
 
-  async function getPres() {
+  async function getPres(isFirst = false) {
     try {
       const pres = await fetchData(
         "pharmacy/get_prescriptions",
@@ -663,13 +664,18 @@ function Content({ optionClick, pageName }) {
         };
       });
 
+      if (isFirst) {
+        localStorage.setItem("presCount", pres["prescriptions"].length);
+      }
+
       if (
+        !isFirst &&
         pres["prescriptions"].length > 0 &&
-        pres["prescriptions"].length > firstPresCount
+        pres["prescriptions"].length > localStorage.getItem("presCount")
       ) {
+        localStorage.setItem("presCount", pres["prescriptions"].length);
         toast.info("یک نسخه جدید موجود شد");
         notificationSound.play();
-        setFirstPresCount(pres["prescriptions"].length);
       }
 
       setPharmacyPresList(filtered);
