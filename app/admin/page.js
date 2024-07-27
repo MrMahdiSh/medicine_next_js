@@ -844,6 +844,14 @@ function Content({ optionClick, pageName }) {
 
       userDetails["status"] = "active";
 
+      const phone = userDetails["phone"];
+      const phoneRegex = /^09\d{9}$/;
+
+      if (!phoneRegex.test(phone)) {
+        toast.error("شماره وارد شده صحیح نمیباشد");
+        return;
+      }
+
       await fetchData(
         "Admin/users",
         "POST",
