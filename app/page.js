@@ -167,10 +167,10 @@ function Content() {
       return;
     }
 
-    // if (!checkCodeMeli(meliCode)) {
-    //   toast.error("کدملی وارد شده صحیح نمیباشد");
-    //   return;
-    // }
+    if (!checkCodeMeli(meliCode)) {
+      toast.error("کدملی وارد شده صحیح نمیباشد");
+      return;
+    }
 
     try {
       const code = await fetchData("Auth/register_send_code", "POST", {
@@ -191,10 +191,10 @@ function Content() {
   async function loginMeliCodeInputHandle() {
     setIsRegister(false);
 
-    // if (!checkCodeMeli(meliCode)) {
-    //   toast.error("کدملی وارد شده صحیح نمیباشد");
-    //   return;
-    // }
+    if (!checkCodeMeli(meliCode)) {
+      toast.error("کدملی وارد شده صحیح نمیباشد");
+      return;
+    }
 
     setIsLoading(true);
     try {
