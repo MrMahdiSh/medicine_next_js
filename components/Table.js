@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { formatDate } from "../utils/formatDate";
 import Image from "next/image";
 
-const Table = ({ columns, rows, paginated = false, changePage }) => {
+const Table = ({
+  columns,
+  rows,
+  paginated = false,
+  changePage,
+  isEmpty = false,
+}) => {
   const tableContainerRef = useRef(null);
 
   useEffect(() => {
@@ -61,7 +67,9 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
                     colSpan={columns.length}
                     className="py-20 px-6 text-center"
                   >
-                    متاسفانه چیزی برای نمایش وجود ندارد
+                    {isEmpty
+                      ? "متاسفانه چیزی برای نمایش وجود ندارد"
+                      : "درحال بارگیری"}
                   </td>
                 </tr>
               )
@@ -90,7 +98,9 @@ const Table = ({ columns, rows, paginated = false, changePage }) => {
                   colSpan={columns.length}
                   className="py-20 px-6 text-center mt-10"
                 >
-                  متاسفانه چیزی برای نمایش وجود ندارد
+                  {rows["data"] && rows["data"].length <= 0
+                    ? "متاسفانه چیزی برای نمایش وجود ندارد"
+                    : "درحال بارگیری"}
                 </td>
               </tr>
             )}

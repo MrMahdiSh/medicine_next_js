@@ -148,7 +148,30 @@ function Content() {
     }
   }
 
+  function checkCodeMeli(code) {
+    var L = code.length;
+
+    if (L < 8 || parseInt(code, 10) == 0) return false;
+    code = ("0000" + code).substr(L + 4 - 10);
+    if (parseInt(code.substr(3, 6), 10) == 0) return false;
+    var c = parseInt(code.substr(9, 1), 10);
+    var s = 0;
+    for (var i = 0; i < 9; i++) s += parseInt(code.substr(i, 1), 10) * (10 - i);
+    s = s % 11;
+    return (s < 2 && c == s) || (s >= 2 && c == 11 - s);
+    return true;
+  }
   async function submitDetails() {
+    if (!name || !lastName || !meliCode) {
+      toast.error("لطفا همه فیلد ها را وارد کنید");
+      return;
+    }
+
+    if (!checkCodeMeli(meliCode)) {
+      toast.error("کدملی وارد شده صحیح نمیباشد");
+      return;
+    }
+
     try {
       const code = await fetchData("Auth/register_send_code", "POST", {
         name,
@@ -167,13 +190,20 @@ function Content() {
 
   async function loginMeliCodeInputHandle() {
     setIsRegister(false);
+    if (!checkCodeMeli(meliCode)) {
+      toast.error("کدملی وارد شده صحیح نمیباشد");
+      return;
+    }
+    setIsLoading(true);
     try {
       const code = await fetchData("Auth/lgin_send_code", "POST", {
         meli_code: meliCode,
       });
       toast.success(code["message"]);
       setTitle("کد تایید");
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       setTitle("عضویت");
       toast.error("کاربر با این کد ملی وجود ندارد");
     }
@@ -214,7 +244,12 @@ function Content() {
           <MainButton
             isLoading={isLoading}
             onclick={() => {
-              setTitle("اطلاعات");
+              const phoneNumberRegex = /^09\d{9}$/;
+              if (!phoneNumberRegex.test(phone)) {
+                toast.error("شماره وارد شده صحیح نمیباشد");
+                return;
+              }
+              if (phone) setTitle("اطلاعات");
             }}
             text={"ادامه"}
           />

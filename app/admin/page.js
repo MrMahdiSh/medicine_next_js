@@ -258,6 +258,7 @@ function Content({ optionClick, pageName }) {
       data: doctorFilter,
       current_page: getDoctors["current_page"],
       total: getDoctors["last_page"],
+      total_hits: getDoctors["total"],
     });
   }
 
@@ -319,6 +320,7 @@ function Content({ optionClick, pageName }) {
       data: transactionsFilter,
       current_page: getTransActions["current_page"],
       total: getTransActions["last_page"],
+      total_hits: getTransActions["total"],
     });
   }
 
@@ -421,6 +423,7 @@ function Content({ optionClick, pageName }) {
         data: filter,
         current_page: docy["current_page"],
         total: docy["last_page"],
+        total_hits: docy["total"],
       });
     } catch (error) {}
   }
@@ -464,6 +467,7 @@ function Content({ optionClick, pageName }) {
       data: filter,
       current_page: getPharmacy["current_page"],
       total: getPharmacy["last_page"],
+      total_hits: getPharmacy["total"],
     });
   }
 
@@ -544,6 +548,7 @@ function Content({ optionClick, pageName }) {
         data: patientPresListFilter,
         current_page: docy["current_page"],
         total: docy["last_page"],
+        total_hits: docy["total"],
       });
     } catch (error) {}
   }
@@ -587,6 +592,7 @@ function Content({ optionClick, pageName }) {
       data: patientFilters,
       current_page: getPatient["current_page"],
       total: getPatient["last_page"],
+      total_hits: getPatient["total"],
     });
   }
 
@@ -641,6 +647,7 @@ function Content({ optionClick, pageName }) {
         data: doctorFilter,
         current_page: docy["current_page"],
         total: docy["last_page"],
+        total_hits: docy["total"],
       });
     } catch (error) {}
   }
