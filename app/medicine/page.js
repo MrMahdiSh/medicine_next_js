@@ -123,6 +123,8 @@ function Content({ optionClick, pageName }) {
     row: null,
   });
 
+  const [noPharmacy, setNoPharmacy] = useState(false);
+
   useEffect(() => {
     async function fetchDataFromServer() {
       try {
@@ -132,6 +134,9 @@ function Content({ optionClick, pageName }) {
           null,
           localStorage.getItem("token")
         );
+        if (fetchedData.length <= 0) {
+          setNoPharmacy(true);
+        }
         setPharmaciesList(fetchedData);
       } catch (e) {
         if (e.message.includes("405")) {
@@ -240,6 +245,7 @@ function Content({ optionClick, pageName }) {
           <div className="mt-20">
             {isSucces != true && (
               <Table
+                isEmpty={noPharmacy}
                 rows={filteredPharmacies}
                 columns={[
                   "لیست داروخانه های موردنظر",
