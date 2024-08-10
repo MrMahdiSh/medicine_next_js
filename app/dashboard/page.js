@@ -576,7 +576,7 @@ function Content({ optionClick, pageName }) {
       if (temperoryUserRole == "doctor") {
         var filteredData = userBehave["hist_details"]["data"].map((behave) => {
           return {
-            user: behave.user.name + "" + behave.user.last_name,
+            user: behave.user.name + " " + behave.user.last_name,
             created_at: behave.created_at,
             prescription: behave.prescription,
             type: behave.Insurance,
@@ -587,7 +587,7 @@ function Content({ optionClick, pageName }) {
       if (temperoryUserRole == "pharmacy" || temperoryUserRole == "user") {
         var filteredData = userBehave["hist_details"]["data"].map((behave) => {
           return {
-            user_name: behave.user.name + "" + behave.user.last_name,
+            user_name: behave.user.name + " " + behave.user.last_name,
             created_at: behave.prescription.created_at,
             type: behave.type ? (
               <span className="flex flex-row-reverse justify-center gap-2">
