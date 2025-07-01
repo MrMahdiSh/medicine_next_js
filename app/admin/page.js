@@ -19,7 +19,7 @@ import CheckUserLog from "@/utils/auth";
 import Modal from "react-modal";
 
 export default function Dashboard() {
-  const [title, setTitle] = useState("صفحه اصلی");
+  const [title, setTitle] = useState("Home Page");
 
   function handleOptionClick(name) {
     setTitle(name);
@@ -61,7 +61,7 @@ export default function Dashboard() {
   if (!userValid) {
     return (
       <div className="w-screen h-screen flex justify-center items-center">
-        لطفا صبر کنید
+        Please wait
       </div>
     );
   }
@@ -72,13 +72,13 @@ export default function Dashboard() {
         title={title}
         changePage={() => {
           router.push("/admin");
-          setTitle("صفحه اصلی");
+          setTitle("Home Page");
         }}
       />
 
       <div className="h-[440px] w-full relative">
         <h1 className="text-center text-2xl absolute w-full font-bold mt-16">
-          {title == "صفحه اصلی" ? "" : title}
+          {title == "Home Page" ? "" : title}
         </h1>
 
         <div className="w-full h-full absolute flex flex-wrap gap-20 mt-20 justify-around items-center">
@@ -95,7 +95,7 @@ function Header({ title, changePage }) {
     <div className="h-[200px] bg-white p-10 mr-10 flex justify-end items-center">
       <div className="flex items-center gap-2">
         <h1 onClick={changePage} className="hover:text-blue-700 cursor-pointer">
-          صفحه اصلی
+          Home Page
         </h1>
         <div style={{ width: "30px", height: "30px" }}>
           <Image
@@ -156,23 +156,23 @@ function Content({ optionClick, pageName }) {
 
   const options = [
     {
-      name: "لیست داروخانه ها",
+      name: "Pharmacies List",
       imageUrl: "pharmacy.png",
       imageUrlHover: "pharmacyHover.png",
     },
     {
-      name: "لیست پزشکان",
+      name: "Doctors List",
       imageUrl: "doctorGroup.png",
       imageUrlHover: "doctorGroupHover.png",
     },
 
     {
-      name: "لیست پرداختی ها",
+      name: "Payments List",
       imageUrl: "cash.png",
       imageUrlHover: "cashHover.png",
     },
     {
-      name: "لیست کاربران",
+      name: "Users List",
       imageUrl: "user.png",
       imageUrlHover: "userHover.png",
     },
@@ -239,7 +239,7 @@ function Content({ optionClick, pageName }) {
               }}
               className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
-              پروفایل
+              Profile
             </button>
             <button
               onClick={() => {
@@ -247,7 +247,7 @@ function Content({ optionClick, pageName }) {
               }}
               className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
-              گزارشات
+              Reports
             </button>
           </div>
         ),
@@ -326,7 +326,7 @@ function Content({ optionClick, pageName }) {
 
   async function pharmacyProfileClick(id) {
     setModalIsOpen(true);
-    setModalTitle("پروفایل داروخانه");
+    setModalTitle("Pharmacy Profile");
     try {
       const docy = await fetchData(
         "Admin/get_pharmacy?pharmacy_id=" + id,
@@ -356,7 +356,7 @@ function Content({ optionClick, pageName }) {
     console.log(id);
     setModalIsOpen(true);
     setLatestID(id);
-    setModalTitle("گزارشات داروخانه");
+    setModalTitle("Pharmacy Reports");
     setIsModalPaginate(true);
     try {
       const docy = await fetchData(
@@ -448,7 +448,7 @@ function Content({ optionClick, pageName }) {
               }}
               className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
-              پروفایل
+              Profile
             </button>
             <button
               onClick={() => {
@@ -456,7 +456,7 @@ function Content({ optionClick, pageName }) {
               }}
               className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
-              گزارشات
+              Reports
             </button>
           </div>
         ),
@@ -473,7 +473,7 @@ function Content({ optionClick, pageName }) {
 
   async function userProfileClick(id) {
     setModalIsOpen(true);
-    setModalTitle("پروفایل کاربر");
+    setModalTitle("User Profile");
     try {
       const docy = await fetchData(
         "Admin/get_patient?patient_id=" + id,
@@ -499,7 +499,7 @@ function Content({ optionClick, pageName }) {
   async function userHistoryClick(id, page = 1) {
     setModalIsOpen(true);
     setLatestID(id);
-    setModalTitle("گزارشات کاربر");
+    setModalTitle("User Reports");
     try {
       const docy = await fetchData(
         "Admin/patient_prescriptions?patient_id=" + id + "&page=" + page,
@@ -573,7 +573,7 @@ function Content({ optionClick, pageName }) {
               }}
               className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
-              پروفایل
+              Profile
             </button>
             <button
               onClick={() => {
@@ -581,7 +581,7 @@ function Content({ optionClick, pageName }) {
               }}
               className="border border-[#EE8D20] text-[#EE8D20] font-bold py-2 px-4 rounded-lg"
             >
-              گزارشات
+              Reports
             </button>
           </div>
         ),
@@ -598,7 +598,7 @@ function Content({ optionClick, pageName }) {
 
   async function doctorProfileClick(id) {
     setModalIsOpen(true);
-    setModalTitle("پروفایل دکتر");
+    setModalTitle("Doctor Profile");
     try {
       const docy = await fetchData(
         "Admin/get_doctor?doctor_id=" + id,
@@ -626,7 +626,7 @@ function Content({ optionClick, pageName }) {
   async function doctorHistoryClick(id, page = 1) {
     setModalIsOpen(true);
     setLatestID(id);
-    setModalTitle("گزارشات دکتر");
+    setModalTitle("Doctor Reports");
     try {
       const docy = await fetchData(
         "Admin/doctor_prescriptions?doctor_id=" + id + "&page=" + page,
@@ -918,7 +918,7 @@ function Content({ optionClick, pageName }) {
                 className="mt-4 bg-green-500 hover:bg-green-600 w-[200px] text-white py-2 px-4 rounded"
                 onClick={submitNewUser}
               >
-                ثبت
+                Submit
               </button>
             </div>
 

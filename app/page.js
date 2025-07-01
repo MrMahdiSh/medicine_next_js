@@ -26,7 +26,7 @@ export default function App() {
 }
 
 function Content() {
-  const [title, setTitle] = useState("عضویت");
+  const [title, setTitle] = useState("Sign Up");
 
   const [phone, setPhone] = useState("");
 
@@ -50,7 +50,7 @@ function Content() {
   async function handleInputPhone() {
     if (phone.length === 11 && phone.startsWith("09")) {
       setIsLoading(true);
-      // send verif code
+      // send verification code
       try {
         const sendVerifCode = await fetchData(
           "Auth/sendVerificationCode",
@@ -61,16 +61,16 @@ function Content() {
         );
         toast.success(sendVerifCode["message"]);
         console.log(sendVerifCode);
-        setTitle("کد تایید");
-        toast.success("کد با موفقیت ارسال شد");
+        setTitle("Verification Code");
+        toast.success("Code sent successfully");
         setIsLoading(false);
       } catch (e) {
         setIsLoading(false);
-        toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
+        toast.error("An error occurred, please try again later");
       }
     } else {
-      // sent a toastify error
-      toast.error("شماره تماس معتبر نیست");
+      // send a toastify error
+      toast.error("Invalid phone number");
     }
   }
 
@@ -104,17 +104,17 @@ function Content() {
             adminLogingSuccess();
           }
         } else {
-          setTitle("اطلاعات");
+          setTitle("Details");
         }
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("user_details", JSON.stringify(data.user_details));
         localStorage.setItem("user_role", data.role[0]);
       } catch (e) {
         setIsLoading(false);
-        toast.error("کد وارد شده صحیح نیست");
+        toast.error("Invalid code entered");
       }
     } else {
-      toast.error("کد وارد شده صحیح نیست");
+      toast.error("Invalid code entered");
     }
   }
 
@@ -134,17 +134,17 @@ function Content() {
             adminLogingSuccess();
           }
         } else {
-          setTitle("اطلاعات");
+          setTitle("Details");
         }
         localStorage.setItem("token", data.access_token);
         localStorage.setItem("user_details", JSON.stringify(data.user_details));
         localStorage.setItem("user_role", data.role[0]);
       } catch (e) {
         setIsLoading(false);
-        toast.error("کد وارد شده صحیح نیست");
+        toast.error("Invalid code entered");
       }
     } else {
-      toast.error("کد وارد شده صحیح نیست");
+      toast.error("Invalid code entered");
     }
   }
 
@@ -163,12 +163,12 @@ function Content() {
   }
   async function submitDetails() {
     if (!name || !lastName || !meliCode) {
-      toast.error("لطفا همه فیلد ها را وارد کنید");
+      toast.error("Please fill in all fields");
       return;
     }
 
     if (!checkCodeMeli(meliCode)) {
-      toast.error("کدملی وارد شده صحیح نمیباشد");
+      toast.error("Invalid national code entered");
       return;
     }
 
@@ -181,10 +181,12 @@ function Content() {
       });
       toast.success(code["message"]);
       setIsRegister(true);
-      setTitle("کد تایید");
+      setTitle("Verification Code");
     } catch (e) {
-      setTitle("ورود");
-      toast.error("با این کدملی یا شماره تماس قبلا عضو شدید لطفا وارد شوید");
+      setTitle("Login");
+      toast.error(
+        "You have already registered with this national code or phone number, please log in"
+      );
     }
   }
 
@@ -192,7 +194,7 @@ function Content() {
     setIsRegister(false);
 
     if (!checkCodeMeli(meliCode)) {
-      toast.error("کدملی وارد شده صحیح نمیباشد");
+      toast.error("Invalid national code entered");
       return;
     }
 
@@ -202,12 +204,12 @@ function Content() {
         meli_code: meliCode,
       });
       toast.success(code["message"]);
-      setTitle("کد تایید");
+      setTitle("Verification Code");
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      setTitle("عضویت");
-      toast.error("کاربر با این کد ملی وجود ندارد");
+      setTitle("Sign Up");
+      toast.error("User with this national code does not exist");
     }
   }
 
@@ -219,10 +221,31 @@ function Content() {
   const [meliCode, setMeliCode] = useState("");
 
   function goToSignIn() {
-    setTitle("ورود");
+    setTitle("Login");
   }
 
   const inputsRef = useRef([]);
+
+  async function loginAs(role = "patient") {
+    try {
+      const data = await fetchData("Auth/loginAs", "POST", {
+        role,
+      });
+      setIsLoading(false);
+      if (data["user_details"]["meli_code"]) {
+        if (data.role[0] != "admin") {
+          HandleLoginSuccess();
+        } else {
+          adminLogingSuccess();
+        }
+      } else {
+        setTitle("Details");
+      }
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("user_details", JSON.stringify(data.user_details));
+      localStorage.setItem("user_role", data.role[0]);
+    } catch (e) {}
+  }
 
   return (
     <div>
@@ -234,12 +257,12 @@ function Content() {
         {title}
       </h1>
 
-      {title === "عضویت" ? (
+      {title === "Sign Up" ? (
         <div className="w-full flex flex-col gap-10">
           <PhoneInput
             isLoading={isLoading}
             theOnChange={getPhone}
-            placeholder={"شماره تلفن"}
+            placeholder={"Phone Number"}
             type={"number"}
           />
 
@@ -248,12 +271,12 @@ function Content() {
             onclick={() => {
               const phoneNumberRegex = /^09\d{9}$/;
               if (!phoneNumberRegex.test(phone)) {
-                toast.error("شماره وارد شده صحیح نمیباشد");
+                toast.error("Invalid phone number entered");
                 return;
               }
-              if (phone) setTitle("اطلاعات");
+              if (phone) setTitle("Details");
             }}
-            text={"ادامه"}
+            text={"Continue"}
           />
 
           <h1
@@ -261,10 +284,10 @@ function Content() {
             className="mx-auto flex items-center gap-3 cursor-pointer"
           >
             <span>&lt;</span>
-            <span className="mr-2">قبلا ثبت نام کرده ام</span>
+            <span className="mr-2">I have already registered</span>
           </h1>
         </div>
-      ) : title === "کد تایید" ? (
+      ) : title === "Verification Code" ? (
         <div className="flex flex-col">
           <div className="w-full h-full flex justify-center items-center">
             <div className="flex space-x-2">
@@ -289,25 +312,25 @@ function Content() {
                 ? handleValidCodeRegister(code[0] + code[1] + code[2] + code[3])
                 : handleValidCodeLogin(code[0] + code[1] + code[2] + code[3]);
             }}
-            text={"تایید"}
+            text={"Confirm"}
           />
           <RoundedButton
             isLoading={isLoading}
             onclick={() => {
               setCode(["", "", "", ""]);
-              setTitle("عضویت");
+              setTitle("Sign Up");
             }}
-            text={"بازگشت به صفحه قبل"}
+            text={"Back to previous page"}
           />
         </div>
-      ) : title === "اطلاعات" ? (
+      ) : title === "Details" ? (
         <div className="flex flex-col gap-10">
           <MainInput
             isLoading={isLoading}
             theOnChange={(e) => {
               setName(e.target.value);
             }}
-            placeholder={"نام"}
+            placeholder={"First Name"}
             type={"string"}
           />
           <MainInput
@@ -315,7 +338,7 @@ function Content() {
             theOnChange={(e) => {
               setLastName(e.target.value);
             }}
-            placeholder={"نام خانوادگی"}
+            placeholder={"Last Name"}
             type={"string"}
           />
           <MainInput
@@ -323,13 +346,13 @@ function Content() {
             theOnChange={(e) => {
               setMeliCode(e.target.value);
             }}
-            placeholder={"کدملی"}
+            placeholder={"National Code"}
             type={"number"}
           />
 
           <div className="w-full flex flex-col">
             <MainButton
-              text={"ثبت"}
+              text={"Submit"}
               isLoading={isLoading}
               onclick={submitDetails}
             />
@@ -337,40 +360,63 @@ function Content() {
               isLoading={isLoading}
               onclick={() => {
                 setCode(["", "", "", ""]);
-                setTitle("عضویت");
+                setTitle("Sign Up");
               }}
-              text={"بازگشت به صفحه قبل"}
+              text={"Back to previous page"}
             />
           </div>
         </div>
-      ) : title === "ورود" ? (
+      ) : title === "Login" ? (
         <div className="w-full flex flex-col gap-10">
           <MainInput
             theOnChange={(e) => {
               setMeliCode(e.target.value);
             }}
-            placeholder={"کد ملی"}
+            placeholder={"National Code"}
           />
 
           <MainButton
             onclick={loginMeliCodeInputHandle}
             isLoading={isLoading}
-            text={"تایید"}
+            text={"Confirm"}
           />
 
           <RoundedButton
             isLoading={isLoading}
             onclick={() => {
               setCode(["", "", "", ""]);
-              setTitle("عضویت");
+              setTitle("Sign Up");
               setMeliCode("");
             }}
-            text={"بازگشت به صفحه قبل"}
+            text={"Back to previous page"}
           />
         </div>
       ) : (
         <></>
       )}
+      <div className="mx-auto w-full flex gap-3">
+        <MainButton
+          onclick={() => {
+            loginAs("Patient");
+          }}
+          isLoading={isLoading}
+          text={"Login As patient"}
+        ></MainButton>
+        <MainButton
+          onclick={() => {
+            loginAs("Doctor");
+          }}
+          isLoading={isLoading}
+          text={"Login As DR"}
+        ></MainButton>
+        <MainButton
+          onclick={() => {
+            loginAs("Pharmacy");
+          }}
+          isLoading={isLoading}
+          text={"Login As Pharmacy"}
+        ></MainButton>
+      </div>
     </div>
   );
 }

@@ -27,11 +27,12 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+/* Update font-family to use a standard English font */
 @font-face {
-  font-family: "Vazir_matn";
-  src: url("../public/Vazir_matn.ttf") format("truetype");
+  font-family: "Roboto";
+  src: local("Roboto"), url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap") format("truetype");
 }
 
 * {
-  font-family: "Vazir_matn", sans-serif;
+  font-family: "Roboto", sans-serif;
 }

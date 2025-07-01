@@ -68,8 +68,8 @@ const Table = ({
                     className="py-20 px-6 text-center"
                   >
                     {isEmpty
-                      ? "متاسفانه چیزی برای نمایش وجود ندارد"
-                      : "درحال بارگیری"}
+                      ? "Unfortunately, there is nothing to display"
+                      : "Loading"}
                   </td>
                 </tr>
               )
@@ -99,8 +99,8 @@ const Table = ({
                   className="py-20 px-6 text-center mt-10"
                 >
                   {rows["data"] && rows["data"].length <= 0
-                    ? "متاسفانه چیزی برای نمایش وجود ندارد"
-                    : "درحال بارگیری"}
+                    ? "Unfortunately, there is nothing to display"
+                    : "Loading"}
                 </td>
               </tr>
             )}
@@ -127,7 +127,7 @@ const Table = ({
                 />
               </button>
               <span className="mx-2 flex justify-center items-center">
-                صفحه قبلی
+                Previous Page
               </span>
             </>
           )}
@@ -137,7 +137,7 @@ const Table = ({
               <div className="mx-5"></div>{" "}
               {/* Extra space between previous and next */}
               <span className="mx-2 flex justify-center items-center">
-                صفحه بعدی
+                Next Page
               </span>
               <button
                 onClick={() => {

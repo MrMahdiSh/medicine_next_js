@@ -9,7 +9,7 @@ export default function MainButton({
       onClick={isLoading == false ? onclick : () => {}}
       className={`mx-auto w-[300px] h-[50px] mt-10 rounded-lg border-2 border-black`}
     >
-      {isLoading == false ? text : "درحال بارگیری"}
+      {isLoading == false ? text : "Loading"}
     </button>
   );
 }

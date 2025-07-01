@@ -7,7 +7,7 @@ export async function fetchData(endpoint, method = "GET", data = null, token = n
     const url = `${apiUrl}/${endpoint}`;
 
     if (message) {
-        toast.info("درحال پردازش لطفا صبر کنید", {
+        toast.info("Processing please wait", {
             position: "top-right",
             autoClose: 1500,
             hideProgressBar: false,

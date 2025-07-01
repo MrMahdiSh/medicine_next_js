@@ -20,7 +20,7 @@ import CheckUserLog from "@/utils/auth";
 import Modal from "react-modal";
 
 export default function App() {
-  const [title, setTitle] = useState("دریافت دارو");
+  const [title, setTitle] = useState("Receive Medicine");
 
   function handleOptionClick(name) {
     setTitle(name);
@@ -58,7 +58,7 @@ export default function App() {
   if (!userValid) {
     return (
       <div className="w-screen h-screen flex justify-center items-center">
-        لطفا صبر کنید
+        Please wait
       </div>
     );
   }
@@ -73,7 +73,7 @@ export default function App() {
       />
       <div className="h-[440px] w-full relative">
         <h1 className="text-center text-2xl absolute w-full font-bold mt-16">
-          {title == "صفحه اصلی" ? "" : title}
+          {title == "Home Page" ? "" : title}
         </h1>
         <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-[2rem] lg:flex-row justify-evenly items-center">
           <Content optionClick={handleOptionClick} pageName={title} />
@@ -89,7 +89,7 @@ function Header({ title, changePage }) {
     <div className="h-[200px] bg-white p-10 mr-10 flex justify-end items-center">
       <div className="flex items-center gap-2">
         <h1 onClick={changePage} className="hover:text-blue-700 cursor-pointer">
-          صفحه اصلی
+          Home Page
         </h1>
         <div style={{ width: "30px", height: "30px" }}>
           <Image
@@ -140,13 +140,13 @@ function Content({ optionClick, pageName }) {
         setPharmaciesList(fetchedData);
       } catch (e) {
         if (e.message.includes("405")) {
-          toast.error("شما قبلا داروخانه را انتخاب کردید");
+          toast.error("You have already selected a pharmacy");
         }
         if (e.message.includes("403")) {
-          toast.error("شما اجازه دسترسی به این نسخه رو ندارید");
+          toast.error("You do not have access to this prescription");
         }
         if (e.message.includes("404")) {
-          toast.error("متاسفانه نسخه پیدا نشد");
+          toast.error("Unfortunately, the prescription was not found");
         }
         router.push("/dashboard");
       }
@@ -162,23 +162,23 @@ function Content({ optionClick, pageName }) {
   const filteredPharmacies = pharmaciesList.map((acceptedPharmacy, index) => {
     const accepted_pres_id = acceptedPharmacy.id;
     const isActiveHozori =
-      activeButton.id === accepted_pres_id && activeButton.type === "حضوری";
+      activeButton.id === accepted_pres_id && activeButton.type === "In Person";
     const isActiveUber =
-      activeButton.id === accepted_pres_id && activeButton.type === "پیک";
+      activeButton.id === accepted_pres_id && activeButton.type === "Delivery";
 
     return {
       list: acceptedPharmacy.pharmacy.name,
       price: acceptedPharmacy.price,
       transportationPrice:
-        activeButton.type == "حضوری" ? 0 : acceptedPharmacy.transportation_cost,
+        activeButton.type == "In Person" ? 0 : acceptedPharmacy.transportation_cost,
       type: (
         <div className="flex flex-row gap-3 justify-center">
           <button
-            key={`حضوری-${accepted_pres_id}`}
+            key={`In Person-${accepted_pres_id}`}
             className={`w-28 h-10 bg-white shadow-lg rounded-md gap-2 flex items-center justify-center
               ${isActiveHozori ? "bg-gray-200 shadow-xl" : ""}
             `}
-            onClick={() => handleTypeChange(accepted_pres_id, "حضوری", index)}
+            onClick={() => handleTypeChange(accepted_pres_id, "In Person", index)}
           >
             <Image
               width={25}
@@ -188,15 +188,15 @@ function Content({ optionClick, pageName }) {
               className="mr-1"
             />
             <span className={`text-black ${isActiveHozori ? "font-bold" : ""}`}>
-              حضوری
+              In Person
             </span>
           </button>
           <button
-            key={`پیک-${accepted_pres_id}`}
+            key={`Delivery-${accepted_pres_id}`}
             className={`w-28 h-10 bg-white shadow-lg rounded-md gap-2 flex items-center justify-center
               ${isActiveUber ? "bg-gray-200 shadow-xl" : ""}
             `}
-            onClick={() => handleTypeChange(accepted_pres_id, "پیک", index)}
+            onClick={() => handleTypeChange(accepted_pres_id, "Delivery", index)}
           >
             <Image
               width={25}
@@ -206,7 +206,7 @@ function Content({ optionClick, pageName }) {
               className="ml-1"
             />
             <span className={`text-black ${isActiveUber ? "font-bold" : ""}`}>
-              پیک
+              Delivery
             </span>
           </button>
         </div>
@@ -229,12 +229,12 @@ function Content({ optionClick, pageName }) {
         true
       );
 
-      toast.success("با موفقیت انجام شد");
+      toast.success("Successfully completed");
       setIsLoading(false);
       setIsSucces(true);
     } catch (e) {
       setIsLoading(false);
-      toast.error("مشکلی پیش آمده لطفا بعدا تلاش کنید");
+      toast.error("An issue occurred, please try again later");
     }
   }
 
@@ -248,10 +248,10 @@ function Content({ optionClick, pageName }) {
                 isEmpty={noPharmacy}
                 rows={filteredPharmacies}
                 columns={[
-                  "لیست داروخانه های موردنظر",
-                  "هزینه دارو",
-                  "هزینه پیک",
-                  "نحوه دریافت",
+                  "List of Desired Pharmacies",
+                  "Medicine Cost",
+                  "Delivery Cost",
+                  "Receiving Method",
                 ]}
                 paginated={false}
               />
@@ -260,10 +260,10 @@ function Content({ optionClick, pageName }) {
             {isSucces != true && activeButton.id != null && (
               <>
                 <div className="text-center mt-20">
-                  {activeButton.type == "پیک" && (
+                  {activeButton.type == "Delivery" && (
                     <>
                       <h1 className="text-xl font-bold mb-6">
-                        آدرس دقیق خود را وارد کنید
+                        Enter your exact address
                       </h1>
 
                       <div className="w-full mx-auto rounded-lg p-4">
@@ -277,7 +277,7 @@ function Content({ optionClick, pageName }) {
                             fontSize: "15px",
                             padding: "20px",
                           }}
-                          placeholder="آدرس خود را وارد کنید"
+                          placeholder="Enter your address"
                         ></textarea>
                       </div>
                     </>
@@ -289,9 +289,9 @@ function Content({ optionClick, pageName }) {
                         <p className="text-left font-bold">
                           {filteredPharmacies[activeButton.row]["price"]}
                         </p>
-                        <span>تومان</span>
+                        <span>Currency</span>
                       </div>
-                      <p className="text-right">:هزینه دارو</p>
+                      <p className="text-right">:Medicine Cost</p>
                     </div>
                     <hr className="border-gray-400 mb-2" />
                     <div className="flex py-4 justify-between">
@@ -303,15 +303,15 @@ function Content({ optionClick, pageName }) {
                             ]
                           }
                         </p>
-                        <span>تومان</span>
+                        <span>Currency</span>
                       </div>
-                      <p className="text-right">:هزینه پیک</p>
+                      <p className="text-right">:Delivery Cost</p>
                     </div>
                     <hr className="border-gray-400 mb-2" />
                     <div className="flex py-4 justify-between">
                       <div className="flex flex-row-reverse gap-1">
                         <p className="text-left font-bold">
-                          {activeButton.type == "حضوری"
+                          {activeButton.type == "In Person"
                             ? filteredPharmacies[activeButton.row]["price"]
                             : parseFloat(
                                 filteredPharmacies[activeButton.row]["price"]
@@ -322,16 +322,16 @@ function Content({ optionClick, pageName }) {
                                 ]
                               )}
                         </p>
-                        <span>تومان</span>
+                        <span>Currency</span>
                       </div>
-                      <p className="text-right">:هزینه کل</p>
+                      <p className="text-right">:Total Cost</p>
                     </div>
                   </div>
                   <div className="mt-6 mx-auto text-center">
                     <MainButton
                       isLoading={isLoading}
                       text={
-                        activeButton.type == "حضوری" ? "ثبت" : "ثبت و پرداخت"
+                        activeButton.type == "In Person" ? "Submit" : "Submit and Pay"
                       }
                       onclick={() => {
                         accept();
@@ -355,15 +355,13 @@ function Content({ optionClick, pageName }) {
                     ></Image>
 
                     <h1 className="mt-8 mx-auto text-center text-xl font-bold">
-                      درخواست شما با موفقیت انجام شد
+                      Your request was successfully completed
                     </h1>
                     <div className="flex mx-auto flex-row-reverse gap-5 justify-center items-center mt-10">
-                      <p>:آدرس داروخانه مورد نظر</p>
+                      <p>:Pharmacy Address</p>
                       <p>
                         {
-                          pharmaciesList[activeButton.row]["pharmacy"][
-                            "address"
-                          ]
+                          pharmaciesList[activeButton.row]["pharmacy"]["address"]
                         }
                       </p>
                     </div>

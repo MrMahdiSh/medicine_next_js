@@ -22,13 +22,13 @@ export default function MainInput({
   return (
     <div className="relative w-full h-[60px]">
       {icon && (
-        <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
           {icon}
         </div>
       )}
       <input
         style={{
-          direction: "rtl",
+          direction: "ltr",
         }}
         className={`w-full h-[60px] p-3 rounded-lg shadow-md`}
         type={type}

@@ -13,7 +13,7 @@ export default function MainButton({
       } rounded-lg text-white`}
       style={{ backgroundColor: `${color}` }}
     >
-      {isLoading == false ? text : "درحال بارگیری"}
+      {isLoading == false ? text : "Loading"}
     </button>
   );
 }

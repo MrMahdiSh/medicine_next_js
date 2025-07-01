@@ -20,7 +20,7 @@ import CheckUserLog from "@/utils/auth";
 import Modal from "react-modal";
 
 export default function Dashboard() {
-  const [title, setTitle] = useState("صفحه اصلی");
+  const [title, setTitle] = useState("Home Page");
 
   function handleOptionClick(name) {
     setTitle(name);
@@ -58,7 +58,7 @@ export default function Dashboard() {
   if (!userValid) {
     return (
       <div className="w-screen h-screen flex justify-center items-center">
-        لطفا صبر کنید
+        Please wait
       </div>
     );
   }
@@ -68,12 +68,12 @@ export default function Dashboard() {
       <Header
         title={title}
         changePage={() => {
-          setTitle("صفحه اصلی");
+          setTitle("Home Page");
         }}
       />
       <div className="h-[440px] w-full relative">
         <h1 className="text-center text-2xl absolute w-full font-bold mt-16">
-          {title == "صفحه اصلی" ? "" : title}
+          {title == "Home Page" ? "" : title}
         </h1>
         <div className="w-full h-full absolute flex flex-col gap-20 mt-20 lg:gap-0 lg:mt-[2rem] lg:flex-row justify-evenly items-center">
           <Content optionClick={handleOptionClick} pageName={title} />
@@ -89,7 +89,7 @@ function Header({ title, changePage }) {
     <div className="h-[200px] bg-white p-10 mr-10 flex justify-end items-center">
       <div className="flex items-center gap-2">
         <h1 onClick={changePage} className="hover:text-blue-700 cursor-pointer">
-          صفحه اصلی
+          Home Page
         </h1>
         <div style={{ width: "30px", height: "30px" }}>
           <Image
@@ -107,25 +107,25 @@ function Header({ title, changePage }) {
 const userInfo = {
   user: [
     {
-      name: "نام",
+      name: "Name",
       type: "text",
       editable: true,
       enName: "name",
     },
     {
-      name: "نام خانوادگی",
+      name: "Last Name",
       type: "text",
       editable: true,
       enName: "last_name",
     },
     {
-      name: "کدملی",
+      name: "National Code",
       type: "number",
       editable: false,
       enName: "meli_code",
     },
     {
-      name: "شماره",
+      name: "Phone Number",
       type: "number",
       editable: false,
       enName: "phone",
@@ -133,37 +133,37 @@ const userInfo = {
   ],
   doctor: [
     {
-      name: "نام",
+      name: "Name",
       type: "text",
       editable: true,
       enName: "name",
     },
     {
-      name: "نام خانوادگی",
+      name: "Last Name",
       type: "text",
       editable: true,
       enName: "last_name",
     },
     {
-      name: "کدملی",
+      name: "National Code",
       type: "number",
       editable: false,
       enName: "meli_code",
     },
     {
-      name: "نوع تخصص",
+      name: "Expertise",
       type: "text",
       editable: true,
       enName: "expertise",
     },
     {
-      name: "آدرس اینستاگرام",
+      name: "Instagram Address",
       type: "text",
       editable: true,
       enName: "instagram",
     },
     {
-      name: "شماره تماس",
+      name: "Phone Number",
       type: "number",
       editable: false,
       enName: "phone",
@@ -171,49 +171,49 @@ const userInfo = {
   ],
   pharmacy: [
     {
-      name: "نام",
+      name: "Name",
       type: "text",
       editable: true,
       enName: "name",
     },
     {
-      name: "نام خانوادگی",
+      name: "Last Name",
       type: "text",
       editable: true,
       enName: "last_name",
     },
     {
-      name: "کدملی پزشک",
+      name: "Doctor's National Code",
       type: "text",
       editable: false,
       enName: "meli_code",
     },
     {
-      name: "آدرس اینستاگرام",
+      name: "Instagram Address",
       type: "text",
       editable: true,
       enName: "instagram",
     },
     {
-      name: "آدرس",
+      name: "Address",
       type: "text",
       editable: true,
       enName: "address",
     },
     {
-      name: "کد مسئول فنی",
+      name: "Technical Assistant Code",
       type: "text",
       editable: true,
       enName: "technical_assistant_code",
     },
     {
-      name: "جواز مطب",
+      name: "Office License",
       type: "text",
       editable: true,
       enName: "Office_license",
     },
     {
-      name: "شماره تماس",
+      name: "Phone Number",
       type: "number",
       editable: false,
       enName: "phone",
@@ -246,7 +246,11 @@ function Content({ optionClick, pageName }) {
 
   const [pharmacyPresList, setPharmacyPresList] = useState([]);
 
-  const notificationSound = new Audio("/sound/notif.mp3");
+  const [notificationSound, setNotif] = useState(null);
+
+  useEffect(() => {
+    setNotif(new Audio("/sound/notif.mp3"));
+  }, []);
 
   const [firstPresCount, setFirstPresCount] = useState(0);
 
@@ -268,17 +272,17 @@ function Content({ optionClick, pageName }) {
   // user behavior
   const prescirptionDetails = [
     {
-      name: "کدملی",
+      name: "National Code",
       type: "number",
       enName: "meli_code",
     },
     {
-      name: "نسخه",
+      name: "Prescription",
       type: "number",
       enName: "prescription",
     },
     {
-      name: "بیمه",
+      name: "Insurance",
       type: "text",
       enName: "Insurance",
     },
@@ -311,46 +315,46 @@ function Content({ optionClick, pageName }) {
   const options = {
     doctor: [
       {
-        name: "تاریخچه",
+        name: "History",
         imageUrl: "addTask.png",
         imageUrlHover: "addTaskHover.png",
       },
       {
-        name: "ثبت نسخه",
+        name: "Submit Prescription",
         imageUrl: "pres.png",
         imageUrlHover: "presHover.png",
       },
       {
-        name: "پروفایل",
+        name: "Profile",
         imageUrl: "doctor.png",
         imageUrlHover: "doctorHover.png",
       },
     ],
     user: [
       {
-        name: "تاریخچه",
+        name: "History",
         imageUrl: "addTask.png",
         imageUrlHover: "addTaskHover.png",
       },
       {
-        name: "پروفایل",
+        name: "Profile",
         imageUrl: "user.png",
         imageUrlHover: "userHover.png",
       },
     ],
     pharmacy: [
       {
-        name: "تاریخچه",
+        name: "History",
         imageUrl: "addTask.png",
         imageUrlHover: "addTaskHover.png",
       },
       {
-        name: "لیست نسخه ها",
+        name: "Prescription List",
         imageUrl: "pharmacy.png",
         imageUrlHover: "pharmacyHover.png",
       },
       {
-        name: "پروفایل",
+        name: "Profile",
         imageUrl: "user.png",
         imageUrlHover: "userHover.png",
       },
@@ -362,20 +366,25 @@ function Content({ optionClick, pageName }) {
   const [UserInfo, setUserInfo] = useState([]);
 
   const columns = {
-    doctor: ["نام کاربری بیمار", "تاریخ مراجعه", "کد نسخه", "نوع بیمه"],
+    doctor: [
+      "Patient Username",
+      "Visit Date",
+      "Prescription Code",
+      "Insurance Type",
+    ],
     user: [
-      "نام کاربر",
-      "تاریخ",
-      "نحوه دریافت دارو",
-      "کدنسخه",
-      "مقدارپرداختی کل",
+      "User Name",
+      "Date",
+      "Medicine Delivery Method",
+      "Prescription Code",
+      "Total Payment",
     ],
     pharmacy: [
-      "نام کاربر",
-      "تاریخ",
-      "نحوه دریافت دارو",
-      "کدنسخه",
-      "مقدارپرداختی کل",
+      "User Name",
+      "Date",
+      "Medicine Delivery Method",
+      "Prescription Code",
+      "Total Payment",
     ],
   };
 
@@ -415,7 +424,7 @@ function Content({ optionClick, pageName }) {
       WritePrescription();
     } catch (e) {
       setIsLoading(false);
-      toast.error("مشکلی پیش آمده");
+      toast.error("An issue occurred");
     }
   }
 
@@ -457,7 +466,7 @@ function Content({ optionClick, pageName }) {
       setIsLoading(false);
       console.log("herer");
       console.log(e);
-      toast.error("مشکلی پیش آمده");
+      toast.error("An issue occurred");
     }
   }
 
@@ -476,7 +485,7 @@ function Content({ optionClick, pageName }) {
   };
 
   function ResetPrescription() {
-    optionClick("صفحه اصلی");
+    optionClick("Home Page");
     setIsLoading(false);
     setPrescriptionSubmited(false);
     setUserAwailablity(false);
@@ -485,7 +494,7 @@ function Content({ optionClick, pageName }) {
   }
 
   async function buyIt(address, price, type, prescription, id) {
-    optionClick("خرید");
+    optionClick("Purchase");
     buyDetails["address"] = address;
     buyDetails["price"] = price;
     buyDetails["type"] = type;
@@ -543,7 +552,7 @@ function Content({ optionClick, pageName }) {
   }
 
   async function selectPharm(id, option) {
-    optionClick("صفحه اصلی");
+    optionClick("Home Page");
     try {
       await fetchData(
         "patient/buy",
@@ -552,9 +561,9 @@ function Content({ optionClick, pageName }) {
         localStorage.getItem("token"),
         true
       );
-      toast.success("با موفقیت انجام شد");
+      toast.success("Successfully completed");
     } catch (error) {
-      toast.error("مشکلی پیش آمده");
+      toast.error("An issue occurred");
     }
   }
 
@@ -651,10 +660,10 @@ function Content({ optionClick, pageName }) {
               <div className="w-[183.05px] h-[40px]">
                 <MainButton
                   onclick={() => {
-                    optionClick("تایید نسخه");
+                    optionClick("accept prescription");
                     setSelectedPres(thePres);
                   }}
-                  text={"ثبت نسخه"}
+                  text={"Submit prescription"}
                   preDesign={false}
                   isLoading={isLoading}
                 />
@@ -674,7 +683,7 @@ function Content({ optionClick, pageName }) {
         pres["prescriptions"].length > localStorage.getItem("presCount")
       ) {
         localStorage.setItem("presCount", pres["prescriptions"].length);
-        toast.info("یک نسخه جدید موجود شد");
+        toast.info("A new prescription is available");
         notificationSound.play();
       }
 
@@ -685,7 +694,7 @@ function Content({ optionClick, pageName }) {
   }
 
   async function pharmAccept(id) {
-    optionClick("صفحه اصلی");
+    optionClick("Home Page");
     try {
       await fetchData(
         "pharmacy/accept_prescription",
@@ -699,7 +708,7 @@ function Content({ optionClick, pageName }) {
         localStorage.getItem("token"),
         true
       );
-      toast.success("عملیات با موفقیت انجام شد");
+      toast.success("Successfully completed");
       getUserBehavior();
       getPres();
     } catch (error) {}
@@ -710,16 +719,16 @@ function Content({ optionClick, pageName }) {
     notAwailablePres: "",
   };
 
-  if (pageName == "تایید نسخه") {
+  if (pageName == "accept prescription") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
         <div className="w-3/4 mx-auto ">
           <div className="container mx-auto py-4">
             <button
-              onClick={() => optionClick("صفحه اصلی")}
+              onClick={() => optionClick("Home Page")}
               className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
             >
-              بازگشت
+              Back
             </button>
 
             <Table
@@ -733,7 +742,7 @@ function Content({ optionClick, pageName }) {
                         pharmacyAcceptPresExtraInfo["price"] = e.target.value;
                       }}
                       type={"number"}
-                      placeholder={"قیمت"}
+                      placeholder={"Price"}
                     />
                   ),
                   notAvailable: (
@@ -742,7 +751,7 @@ function Content({ optionClick, pageName }) {
                         pharmacyAcceptPresExtraInfo["notAwailablePres"] =
                           e.target.value;
                       }}
-                      placeholder={"دارو هایی که موجود نیست"}
+                      placeholder={"not available drugs!"}
                     />
                   ),
                   action: (
@@ -752,7 +761,7 @@ function Content({ optionClick, pageName }) {
                           onclick={() => {
                             pharmAccept(selectedPres["id"]);
                           }}
-                          text={"تایید نسخه"}
+                          text={"Submit prescription"}
                           preDesign={false}
                           isLoading={isLoading}
                         />
@@ -761,14 +770,20 @@ function Content({ optionClick, pageName }) {
                   ),
                 },
               ]}
-              columns={["نسخه", "کدملی", "قیمت", "ناموجودها", "تایید"]}
+              columns={[
+                "prescription",
+                "National code",
+                "price",
+                "Not available",
+                "Submit",
+              ]}
             />
           </div>
         </div>
       </div>
     );
   }
-  if (pageName == "ثبت نسخه") {
+  if (pageName == "Submit Prescription") {
     if (prescriptionSubmited && !isLoading && prescriptionDone) {
       return (
         <>
@@ -780,10 +795,10 @@ function Content({ optionClick, pageName }) {
                     onClick={() => ResetPrescription()}
                     className="bg-green-400 text-white py-2 px-4 rounded hover:bg-green-500 mb-10"
                   >
-                    صفحه اصلی
+                    Home Page
                   </button>
 
-                  <h1>با موفقیت ثبت شد</h1>
+                  <h1>Successfully completed</h1>
                 </div>
               </div>
             </div>
@@ -798,20 +813,22 @@ function Content({ optionClick, pageName }) {
             <div className="w-3/4 mx-auto ">
               <div className="container mx-auto py-4">
                 <div className="w-full bg-white rounded-3xl shadow-2xl p-10 text-right">
-                  <h1 className="mb-10">لطفا شماره تماس بیمار را وارد کنید</h1>
+                  <h1 className="mb-10">
+                    Please enter the patient's phone number
+                  </h1>
                   <MainInput
                     type={"number"}
                     theOnChange={(e) => {
                       setNewUserPhone(e.target.value);
                     }}
-                    placeholder={"شماره تماس"}
+                    placeholder={"Phone Number"}
                   />
                   <MainButton
                     onclick={() => {
                       NewUserPhone();
                     }}
                     isLoading={isLoading}
-                    text={"ثبت"}
+                    text={"Submit"}
                   />
                 </div>
               </div>
@@ -825,10 +842,10 @@ function Content({ optionClick, pageName }) {
         <div className="w-3/4 mx-auto ">
           <div className="container mx-auto py-4">
             <button
-              onClick={() => optionClick("صفحه اصلی")}
+              onClick={() => optionClick("Home Page")}
               className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
             >
-              بازگشت
+              Back
             </button>
 
             <div className="w-full bg-white rounded-3xl shadow-2xl p-10">
@@ -837,9 +854,9 @@ function Content({ optionClick, pageName }) {
                   <thead>
                     <tr>
                       <th className="px-6 py-4 border-b-2"></th>
-                      <th className="px-6 py-4 border-b-2">بیمه</th>
-                      <th className="px-6 py-4 border-b-2">کدملی</th>
-                      <th className="px-6 py-4 border-b-2">نسخه</th>
+                      <th className="px-6 py-4 border-b-2">Insurance</th>
+                      <th className="px-6 py-4 border-b-2">National Code</th>
+                      <th className="px-6 py-4 border-b-2">Prescription</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -851,7 +868,7 @@ function Content({ optionClick, pageName }) {
                               IsUserAwailable();
                             }}
                             isLoading={isLoading}
-                            text={"ثبت نسخه"}
+                            text={"Submit prescription"}
                             preDesign={false}
                           />
                         </div>
@@ -861,9 +878,9 @@ function Content({ optionClick, pageName }) {
                           onChange={(e) => handleInputChange(e, "Insurance")}
                           className="w-full px-4 py-2 border border-gray-300 rounded-md"
                         >
-                          <option value="insurance1">آزاد</option>
-                          <option value="insurance2">تامین اجتماعی</option>
-                          <option value="insurance3">سلامت</option>
+                          <option value="insurance1">Free</option>
+                          <option value="insurance2">Social Security</option>
+                          <option value="insurance3">Health</option>
                         </select>
                       </td>
 
@@ -872,7 +889,7 @@ function Content({ optionClick, pageName }) {
                           theOnChange={(e) => handleInputChange(e, "meli_code")}
                           isLoading={isLoading}
                           type="text"
-                          placeholder="کدملی"
+                          placeholder="National Code"
                         />
                       </td>
                       <td className="px-6 py-4">
@@ -882,7 +899,7 @@ function Content({ optionClick, pageName }) {
                           }
                           isLoading={isLoading}
                           type="text"
-                          placeholder="نسخه"
+                          placeholder="Prescription"
                         />
                       </td>
                     </tr>
@@ -896,16 +913,16 @@ function Content({ optionClick, pageName }) {
     );
   }
 
-  if (pageName == "خرید") {
+  if (pageName == "purchase") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
         <div className="w-3/4 mx-auto ">
           <div className="container mx-auto py-4">
             <button
-              onClick={() => optionClick("صفحه اصلی")}
+              onClick={() => optionClick("Home Page")}
               className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
             >
-              بازگشت
+              Back
             </button>
 
             {buyDetails["address"] && (
@@ -923,7 +940,7 @@ function Content({ optionClick, pageName }) {
                         }}
                         className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-500 mb-10"
                       >
-                        خرید
+                        Purchase
                       </button>
                     ),
                   },
@@ -938,16 +955,16 @@ function Content({ optionClick, pageName }) {
     );
   }
 
-  if (pageName == "تاریخچه") {
+  if (pageName == "History") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
         <div className="w-3/4 mx-auto ">
           <div className="container mx-auto py-4">
             <button
-              onClick={() => optionClick("صفحه اصلی")}
+              onClick={() => optionClick("Home Page")}
               className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
             >
-              بازگشت
+              Back
             </button>
 
             {rows && userRole && (
@@ -966,18 +983,16 @@ function Content({ optionClick, pageName }) {
     );
   }
 
-  const presDetailsCol = ["آدرس", "قیمت", "عملگر"];
-
-  if (pageName == "نسخه ها") {
+  if (pageName == "Prescriptions") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
         <div className="w-3/4 mx-auto ">
           <div className="container mx-auto py-4">
             <button
-              onClick={() => optionClick("صفحه اصلی")}
+              onClick={() => optionClick("Home Page")}
               className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
             >
-              بازگشت
+              Back
             </button>
 
             <Modal
@@ -987,13 +1002,13 @@ function Content({ optionClick, pageName }) {
               overlayClassName="fixed inset-0"
             >
               <div className="bg-white w-[85%] p-10 rounded-lg shadow-lg">
-                <h1 className="text-right mb-5">لیست داروخانه ها</h1>
+                <h1 className="text-right mb-5">Pharmacy List</h1>
                 <Table columns={presDetailsCol} rows={pharmaciesList} />
                 <button
                   className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
                   onClick={() => setModalIsOpen(false)}
                 >
-                  خروج
+                  Exit
                 </button>
               </div>
             </Modal>
@@ -1007,20 +1022,23 @@ function Content({ optionClick, pageName }) {
     );
   }
 
-  if (pageName == "لیست نسخه ها") {
+  if (pageName == "Prescription List") {
     return (
       <div className="w-full h-[10px] mb-[26rem] relative">
         <div className="w-3/4 mx-auto ">
           <div className="container mx-auto py-4">
             <button
-              onClick={() => optionClick("صفحه اصلی")}
+              onClick={() => optionClick("Home Page")}
               className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
             >
-              بازگشت
+              Back
             </button>
 
             {rows && userRole && (
-              <Table columns={["نسخه", "کدملی", ""]} rows={pharmacyPresList} />
+              <Table
+                columns={["Prescription", "National code", ""]}
+                rows={pharmacyPresList}
+              />
             )}
           </div>
         </div>
@@ -1038,10 +1056,10 @@ function Content({ optionClick, pageName }) {
       const newData = await CheckUserLog();
       setTheUserDetail(newData);
       localStorage.setItem("user_details", JSON.stringify(newData));
-      toast.success("با موفقیت انجام شد");
-      optionClick("صفحه اصلی");
+      toast.success("Successfully completed");
+      optionClick("Home Page");
     } catch (e) {
-      toast.error("مشکلی پیش آمده");
+      toast.error("An issue occurred");
     }
   }
 
@@ -1072,15 +1090,15 @@ function Content({ optionClick, pageName }) {
     } catch (error) {}
   }
 
-  if (pageName == "پروفایل") {
+  if (pageName == "Profile") {
     return (
       <div className="w-full h-[10px] mb-[24rem] lg:mb-[2rem] relative">
         <div className="w-3/4 mx-auto mt-[-111px]">
           <button
-            onClick={() => optionClick("صفحه اصلی")}
+            onClick={() => optionClick("Home Page")}
             className="bg-orange-400 text-white py-2 px-4 rounded hover:bg-orange-500 mb-10"
           >
-            بازگشت
+            Back
           </button>
 
           <div className="w-full flex flex-col-reverse lg:flex-row gap-10 justify-around">
@@ -1117,7 +1135,7 @@ function Content({ optionClick, pageName }) {
                       UpdateUserInfo();
                     }}
                     isLoading={false}
-                    text={"ثبت"}
+                    text={"Submit"}
                   />
                 </div>
               </div>
@@ -1144,14 +1162,14 @@ function Content({ optionClick, pageName }) {
                 {/* history activity */}
                 <div className="mt-10">
                   <div className="w-full flex flex-row-reverse justify-around">
-                    <h1>{"<"} تاریخچه فعالیت</h1>
+                    <h1>{"<"} Activity History</h1>
                     <h1 className="text-orange-400">{theCount}</h1>
                   </div>
                 </div>
                 {/* logout */}
                 <div onClick={LogOut} className="absolute bottom-10 w-full">
                   <h1 className="cursor-pointer text-red-500 text-center">
-                    خروج از حساب کاربری
+                    Log Out
                   </h1>
                 </div>
               </div>
