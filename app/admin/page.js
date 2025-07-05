@@ -146,10 +146,14 @@ function Content({ optionClick, pageName }) {
     setRole(localStorage.getItem("user_role"));
     setTheUserDetail(JSON.parse(localStorage.getItem("user_details")));
     setUserToken(localStorage.getItem("token"));
-    fetchDoctors();
-    fetchPatients();
-    fetchTransactions();
-    fetchPharmacy();
+    const fetchAll = async () => {
+      await fetchDoctors();
+      await fetchPatients();
+      await fetchTransactions();
+      await fetchPharmacy();
+    };
+
+    fetchAll();
   }, []);
 
   const [hoveredOption, setHoveredOption] = useState(null);

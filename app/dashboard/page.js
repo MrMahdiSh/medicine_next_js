@@ -303,12 +303,20 @@ function Content({ optionClick, pageName }) {
     getUserBehavior();
     setUserToken(localStorage.getItem("token"));
     history_count();
+  
     if (localStorage.getItem("user_role") == "pharmacy") {
       getPres(true);
-      setInterval(getPres, 20000);
-      setInterval(getUserBehavior, 20000);
+  
+      const presInterval = setInterval(() => getPres(true), 20000);
+      const behaviorInterval = setInterval(() => getUserBehavior(), 20000);
+  
+      return () => {
+        clearInterval(presInterval);
+        clearInterval(behaviorInterval);
+      };
     }
   }, []);
+  
 
   const [hoveredOption, setHoveredOption] = useState(null);
 
@@ -814,7 +822,7 @@ function Content({ optionClick, pageName }) {
               <div className="container mx-auto py-4">
                 <div className="w-full bg-white rounded-3xl shadow-2xl p-10 text-right">
                   <h1 className="mb-10">
-                    Please enter the patient's phone number
+                    Please enter the patients phone number
                   </h1>
                   <MainInput
                     type={"number"}

@@ -153,7 +153,7 @@ function Content({ optionClick, pageName }) {
     }
 
     fetchDataFromServer();
-  }, []);
+  }, [prescription, router]);
 
   const handleTypeChange = (id, newType, row) => {
     setActiveButton({ id, type: newType, row });
